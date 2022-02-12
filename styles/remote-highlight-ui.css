@@ -1,0 +1,25 @@
+.rhi-highlighted {
+    box-shadow: 0 0 0 max(1000vh, 1000vw) rgba(0, 0, 0, 0.6) !important;
+    z-index: 999 !important;
+    outline-style: dashed !important;
+    outline-color: red !important;
+}
+.rhi-highlighted-position-relative {
+    position:relative !important;
+}
+.rhi-highlighted-extra {
+    outline-width: thick !important;
+}
+.rhi-highlighted-parent-hidden {
+    overflow: unset !important;
+}
+.rhi-highlighted-parent-front {
+    z-index: 999 !important;
+}
+
+.rhi-dark-overlay {
+    background:rgba(0,0,0,0.5);
+    display:none;
+    width:100%; height:100%;
+    position:absolute; top:0; left:0; z-index:99998;
+}
