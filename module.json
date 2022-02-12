@@ -6,7 +6,9 @@
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9",
   "esmodules": [
-    "scripts/remote-highlight-ui.js"
+    "scripts/remote-highlight-ui.js",
+    "scripts/hooks.js",
+    "scripts/sockets.js"
   ],
   "url": "https://github.com/itamarcu/remote-highlight-ui",
   "manifest": "https://github.com/itamarcu/remote-highlight-ui/raw/master/module.json",
