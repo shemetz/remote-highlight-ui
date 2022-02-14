@@ -16,7 +16,7 @@ Useful for teaching people the UI remotely, or bringing attention to things (e.g
 Serves a similar purpose to pings on the canvas, but for the UI.
 
 To activate, Ctrl+Aux-Click on a UI element.  The element will be highlighted on all other players' screens.
-"Aux-Click" is right-click, middle-click, or even stuff like a mouse's side button mapped to "Forward".
+"Aux-Click" is middle-click or a mouse's side button mapped to "Forward". (left/right click won't count)
 
 **Important:** for now this is an "opt in" feature - after enabling the module you should also enable the setting for
 yourself as a user:

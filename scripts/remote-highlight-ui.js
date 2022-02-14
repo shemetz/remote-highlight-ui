@@ -115,19 +115,28 @@ const debounceEmitHighlight = (elem) => {
   }, 100)
 }
 
+/**
+ * On aux clicking an element while holding Control (but not right-clicking):
+ *
+ * Emit remote-highlight-UI message, and also do it locally, and also refresh listeners for the future
+ */
+const onElementAuxClick = (event) => {
+  if (event.button === 2) return // no right-click
+  if (!game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)) return
+  const elem = event.currentTarget
+  event.stopPropagation()
+  event.preventDefault()
+  debounceEmitHighlight(elem)
+  debounceRefreshHighlightListeners()
+}
+
 export const refreshRemoteHighlightListeners = () => {
   // EVERY element on the page can be highlighted (O_o) so we'll try to not call this function super often
   $('*').each((i, elem) => {
     // avoid if it's stuff that really shouldn't need highlighting
     if (['HTML', 'BODY', 'CANVAS', 'SECTION'].includes(elem.tagName)) return
-    elem.addEventListener('auxclick', (event) => {
-      // on aux clicking an element while holding Control
-      if (!game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)) return
-      event.stopPropagation()
-      event.preventDefault()
-      debounceEmitHighlight(elem)
-      debounceRefreshHighlightListeners()
-    })
+    elem.removeEventListener('auxclick', onElementAuxClick)
+    elem.addEventListener('auxclick', onElementAuxClick)
   })
 }
 
