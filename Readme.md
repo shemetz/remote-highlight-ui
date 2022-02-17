@@ -12,6 +12,8 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 
 ![remote highlights demo 1](metadata/demo_1.gif)
 
+![remote highlights demo 2](metadata/demo_2.gif)
+
 Useful for teaching people the UI remotely, or bringing attention to things (e.g. the end turn button).
 Serves a similar purpose to pings on the canvas, but for the UI.
 
