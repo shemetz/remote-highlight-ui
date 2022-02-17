@@ -43,7 +43,7 @@ const generateQuerySelectorRecur = (elem, childStr, options) => {
       || (attr.name === 'title' && className.includes('control-tool'))
       || [
         'data-control', 'data-tool', 'data-tab', 'data-pack', 'data-skill', 'data-property',
-        'data-sort-name',
+        'data-sort-name', 'data-action', 'data-trait', 'data-folder', 'data-pack', 'data-src',
       ].includes(attr.name)
     ) {
       uniqueAttribute = attr.name
@@ -85,7 +85,7 @@ const generateQuerySelectorRecur = (elem, childStr, options) => {
 }
 
 export const generateUniqueSelector = (element) => {
-  let selector
+  let selector, shorterSelector
   // first try avoiding "nth child" since it can be different for different clients
   selector = generateQuerySelectorRecur(element, '', { tryNthChild: false })
   if (!isUniqueSelector(selector)) {
@@ -96,14 +96,15 @@ export const generateUniqueSelector = (element) => {
   // in case the GM sees extra children for some element (e.g. highlighting damage in chat message card)
   const firstArrowInSelector = selector.indexOf('>')
   const lastArrowInSelector = selector.lastIndexOf('>')
-  let shorterSelector
-  shorterSelector = selector.substring(0, firstArrowInSelector)
-    + '   '  // triple space is just more readable than one space
-    + selector.substring(lastArrowInSelector + 1)
-  if (isUniqueSelector(shorterSelector)) selector = shorterSelector
+  if (firstArrowInSelector !== -1) {
+    shorterSelector = selector.substring(0, firstArrowInSelector)
+      + ' '
+      + selector.substring(lastArrowInSelector + 1)
+    if (isUniqueSelector(shorterSelector)) selector = shorterSelector
+  }
   // remove nth children just in case suddenly it's possible
   shorterSelector = selector.replace(/:nth-child\([0-9]+\)/g, '')
   if (isUniqueSelector(shorterSelector)) selector = shorterSelector
-  console.log(`Remote Highlight UI | clicked: \`${selector}\``)
+  console.log(`Remote Highlight UI | clicked:    ${selector}`)
   return selector
 }

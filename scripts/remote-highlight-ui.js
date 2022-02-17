@@ -15,6 +15,7 @@ const shouldPreventThisParentElementFromHidingOverflow = (elem) => {
     || elem.matches('#combat li.combatant .token-name') // combat tab
     || elem.matches('.pf2e.sheet .sheet-body') // pf2e item sheet and such
     || elem.matches('.pf2e.item.sheet form>article') // same
+    || elem.matches('.dice-tooltip .dice-rolls') // dice roll (pf2e/dnd5e)
     || elem.matches('.dnd5e.sheet .items-list .item-name') // dnd5e inventory
     || elem.matches('.tidy5e.sheet.actor .items-list .item .item-name') // tidy5e
     || elem.matches('.tidy5e.sheet.actor .sheet-body') // same
@@ -91,6 +92,12 @@ export const onSocketMessageHighlightSomething = (message) => {
   }
 }
 
+const areKeybindingModifierKeysFitting = (modifiers) => {
+  const expectedModifiers = JSON.parse(game.settings.get(MODULE_ID, 'keybinding-modifiers'))
+  return expectedModifiers.every((modifier) => modifiers.includes(modifier)) &&
+    modifiers.length === expectedModifiers.length
+}
+
 /**
  * message should have a 'selector' field, and a potential 'playerId' field
  */
@@ -122,7 +129,8 @@ const debounceEmitHighlight = (elem) => {
  */
 const onElementAuxClick = (event) => {
   if (event.button === 2) return // no right-click
-  if (!game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)) return
+  const heldModifiers = KeyboardManager.getKeyboardEventContext(event).modifiers
+  if (!areKeybindingModifierKeysFitting(heldModifiers)) return
   const elem = event.currentTarget
   event.stopPropagation()
   event.preventDefault()
@@ -155,30 +163,21 @@ let didLibwrapperRegister = false
 export const hookRemoteHighlight = (enabled) => {
   if (enabled) Hooks.on('ready', debounceRefreshHighlightListeners)
   else Hooks.off('ready', debounceRefreshHighlightListeners)
-  // this is overkill but it works
-  const variousHooks = [
-    ...Object.keys(Hooks._hooks),
-    'renderSettingsConfig',
-    'renderActorSheet',
-    'renderItemSheet',
-    'renderApplication',
-  ]
-  for (const renderSomething of [...new Set(variousHooks)]) {
-    if (renderSomething.startsWith('render')) {
-      if (enabled) Hooks.on(renderSomething, debounceRefreshHighlightListeners)
-      else Hooks.off(renderSomething, debounceRefreshHighlightListeners)
-    }
-  }
 
   if (enabled) {
     libWrapper.register(MODULE_ID, 'FormApplication.prototype._render', (wrapped, ...args) => {
       removeHighlight()
       return wrapped(...args)
     }, 'WRAPPER')
+    libWrapper.register(MODULE_ID, 'Application.prototype._render', (wrapped, ...args) => {
+      const returned = wrapped(...args)
+      setTimeout(debounceRefreshHighlightListeners, 0.5 * SECOND)
+      return returned
+    }, 'WRAPPER')
     didLibwrapperRegister = true
-  }
-  else if (didLibwrapperRegister) {
+  } else if (didLibwrapperRegister) {
     libWrapper.unregister(MODULE_ID, 'FormApplication.prototype._render')
+    libWrapper.unregister(MODULE_ID, 'Application.prototype._render')
     didLibwrapperRegister = false
   }
 }

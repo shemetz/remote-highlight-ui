@@ -10,6 +10,19 @@ Hooks.on('init', () => {
     default: false,
     onChange: hookRemoteHighlight
   })
+  game.settings.register(MODULE_ID, 'keybinding-modifiers', {
+    name: `Modifier Keys`,
+    hint: `Choose modifier keys required for the highlight to trigger on a middle-click (default Ctrl).`,
+    scope: 'client',
+    config: true,
+    type: String,
+    default: '["Control"]',
+    choices: {
+      '["Control"]': 'Control',
+      '["Control","Shift"]': 'Control + Shift',
+      '["Shift"]': 'Shift',
+    },
+  })
 })
 
 Hooks.on('ready', () => {
