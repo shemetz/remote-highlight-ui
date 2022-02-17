@@ -12,7 +12,6 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 
 ![remote highlights demo 1](metadata/demo_1.gif)
 
-![remote highlights demo 2](metadata/demo_2.gif)
 
 Useful for teaching people the UI remotely, or bringing attention to things (e.g. the end turn button).
 Serves a similar purpose to pings on the canvas, but for the UI.
@@ -45,3 +44,9 @@ checks because some of those hidden overflow things are important to keep (e.g. 
 
 More custom work and maintenance will likely be needed to continually improve the applicability of this feature to all
 UI elements.
+
+## More gifs
+
+![remote highlights demo 3 (pathfinder character sheet)](metadata/demo_3.gif)
+
+![remote highlights demo 2](metadata/demo_2.gif)
