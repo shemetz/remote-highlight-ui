@@ -42,6 +42,7 @@ const generateQuerySelectorRecur = (elem, childStr, options) => {
       || (attr.name === 'name' && ['input', 'button'].includes(tagName))
       || (attr.name === 'title' && className.includes('control-tool'))
       || [
+        // when adding strings to this list, make sure there aren't multiple elements with identical values for them!
         'data-control', 'data-tool', 'data-tab', 'data-pack', 'data-skill', 'data-property',
         'data-sort-name', 'data-action', 'data-trait', 'data-folder', 'data-pack', 'data-src',
       ].includes(attr.name)
