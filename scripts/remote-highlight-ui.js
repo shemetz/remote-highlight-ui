@@ -128,7 +128,7 @@ const debounceEmitHighlight = (elem) => {
  * Emit remote-highlight-UI message, and also do it locally, and also refresh listeners for the future
  */
 const onElementAuxClick = (event) => {
-  if (event.button === 2) return // no right-click
+  if (event.button === 2 && !game.settings.get(MODULE_ID, 'allow-when-right-clicking')) return
   const heldModifiers = KeyboardManager.getKeyboardEventContext(event).modifiers
   if (!areKeybindingModifierKeysFitting(heldModifiers)) return
   const elem = event.currentTarget
