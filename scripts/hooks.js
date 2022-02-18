@@ -1,6 +1,6 @@
 import {
   additionalPlayerListContextOptions,
-  debounceRefreshHighlightListeners, onRenderPlayerList,
+  debounceRefreshHighlightListeners, onRenderPlayerList, removeHighlight,
   removeRemoteHighlightListeners
 } from './remote-highlight-ui.js'
 import { MODULE_ID, registerSettings, SECOND } from './settings.js'

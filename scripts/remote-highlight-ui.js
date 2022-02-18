@@ -63,7 +63,7 @@ const addHighlight = ($element) => {
   flipExtraHighlight()
 }
 
-const removeHighlight = () => {
+export const removeHighlight = () => {
   if ($currHighlitElement) {
     $currHighlitElement.removeClass('rhi-highlighted')
     $currHighlitElement.removeClass('rhi-highlighted-position-relative')
