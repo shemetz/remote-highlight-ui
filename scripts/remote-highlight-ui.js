@@ -44,6 +44,16 @@ const addHighlight = ($element) => {
       $elem.addClass('rhi-highlighted-parent-hidden')
     }
   })
+  // switch to that tab if needed
+  const parentTab = $currHighlitElement.parents()
+    .filter((i, e) => e.matches('.tab.sidebar-tab'))[0]
+  if (parentTab) {
+    const currentlyActiveTab = $('.tab.sidebar-tab.active')[0]
+    if (currentlyActiveTab.id !== parentTab.id) {
+      ui.sidebar.tabs[parentTab.id].activate();
+    }
+  }
+  // scroll into view
   $currHighlitElement[0].scrollIntoViewIfNeeded()
 
   // basic animation

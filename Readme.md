@@ -26,6 +26,17 @@ yourself as a user:
 
 ![](metadata/config_enable.png)
 
+## Behavior
+Once you highlight an element, it will transmit the highlight to all players who have that element in their UI.
+
+If you're sent a highlight of something on another sidebar tab (e.g. an actor while you're looking at the chat), 
+the right tab will become activated so that you can see the highlight.
+
+If you're sent a highlight of something out of your view that can be scrolled to (e.g. a chat message from a few
+minutes ago), it will scroll into view.
+
+The highlight will normally be sent to all other users.
+
 ## Implementation details for nerds
 
 The module adds an `auxclick` event listener to nearly every single UI element. When those are triggered and Ctrl is
