@@ -5,23 +5,33 @@
     outline-style: dashed !important;
     outline-color: red !important;
 }
+
 /*this enables the darkening to work better, but shouldn't replace things with
  absolute positioning because it'll make things wonky*/
 .rhi-highlighted-position-relative {
-    position:relative !important;
+    position: relative !important;
 }
+
 /*temporarily thicker highlight, for a primitive animation*/
 .rhi-highlighted-extra {
     outline-width: thick !important;
 }
+
 /*parent elements of the highlighted element will have their overflow unset, to allow the dark box-shadow to
 expand further.  but this should not be applied to everything, e.g. shouldn't affect chatbox because we don't
 want it to overflow.*/
 .rhi-highlighted-parent-hidden {
     overflow: unset !important;
 }
+
 /*parent elements of the highlighted element will have their z-index increased.  usually this is harmless.
 it helps the dark box shadow cover more stuff.*/
 .rhi-highlighted-parent-front {
     z-index: 998 !important;
+}
+
+/*used to mark a user in the player list as currently singled out for highlighting*/
+.rhi-only-highlight-for-this-user {
+    outline-color: red;
+    outline-style: auto;
 }

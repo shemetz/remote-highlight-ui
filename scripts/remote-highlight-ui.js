@@ -1,9 +1,7 @@
 import { generateUniqueSelector } from './generate-unique-selector.js'
+import { EXTRA_HIGHLIGHT_FREQUENCY, HIGHLIGHT_DURATION, MODULE_ID } from './settings.js'
 
-export const MODULE_ID = 'remote-highlight-ui'
-const SECOND = 1000
-const HIGHLIGHT_DURATION = 3 * SECOND
-const EXTRA_HIGHLIGHT_FREQUENCY = 5
+let userIdToOnlyHighlightFor = null
 
 const shouldPreventThisParentElementFromHidingOverflow = (elem) => {
   return elem.matches('.main-controls')
@@ -50,7 +48,7 @@ const addHighlight = ($element) => {
   if (parentTab) {
     const currentlyActiveTab = $('.tab.sidebar-tab.active')[0]
     if (currentlyActiveTab.id !== parentTab.id) {
-      ui.sidebar.tabs[parentTab.id].activate();
+      ui.sidebar.tabs[parentTab.id].activate()
     }
   }
   // scroll into view
@@ -108,6 +106,47 @@ const areKeybindingModifierKeysFitting = (modifiers) => {
     modifiers.length === expectedModifiers.length
 }
 
+export const additionalPlayerListContextOptions = () => {
+  return [
+    {
+      name: 'Highlight UI only for this user',
+      icon: '<i class="fas fa-bullseye"></i>',
+      condition: li => {
+        const thatUserId = li[0].dataset.userId
+        return game.settings.get(MODULE_ID, 'enable-for-this-user')
+          && userIdToOnlyHighlightFor !== thatUserId
+          && thatUserId !== game.user.id
+      },
+      callback: li => {
+        userIdToOnlyHighlightFor = li[0].dataset.userId
+        onRenderPlayerList()
+      }
+    },
+    {
+      name: 'Stop highlighting only for this user',
+      icon: '<i class="fas fa-ban"></i>',
+      condition: li => {
+        return game.settings.get(MODULE_ID, 'enable-for-this-user')
+          && userIdToOnlyHighlightFor === li[0].dataset.userId
+      },
+      callback: () => {
+        userIdToOnlyHighlightFor = null
+        onRenderPlayerList()
+      }
+    }]
+}
+
+export const onRenderPlayerList = () => {
+  // unbold previous
+  $(`ol#player-list > li`)
+    .removeClass('rhi-only-highlight-for-this-user')
+  // bold current
+  if (userIdToOnlyHighlightFor) {
+    $(`ol#player-list > li[data-user-id="${userIdToOnlyHighlightFor}"]`)
+      .addClass('rhi-only-highlight-for-this-user')
+  }
+}
+
 /**
  * message should have a 'selector' field, and a potential 'playerId' field
  */
@@ -115,6 +154,9 @@ export const emitHighlight = (message) => {
   const msg = {
     type: 'HIGHLIGHT_ELEMENT',
     ...message
+  }
+  if (userIdToOnlyHighlightFor) {
+    msg.playerId = userIdToOnlyHighlightFor
   }
   game.socket.emit(`module.${MODULE_ID}`, msg)
   onSocketMessageHighlightSomething(msg)
@@ -158,8 +200,15 @@ export const refreshRemoteHighlightListeners = () => {
   })
 }
 
+export const removeRemoteHighlightListeners = () => {
+  $('*').each((i, elem) => {
+    if (['HTML', 'BODY', 'CANVAS', 'SECTION'].includes(elem.tagName)) return
+    elem.removeEventListener('auxclick', onElementAuxClick)
+  })
+}
+
 let debounceRefreshTimeout = null
-const debounceRefreshHighlightListeners = () => {
+export const debounceRefreshHighlightListeners = () => {
   if (debounceRefreshTimeout) {
     clearTimeout(debounceRefreshTimeout)
   }
@@ -167,27 +216,4 @@ const debounceRefreshHighlightListeners = () => {
     debounceRefreshTimeout = null
     refreshRemoteHighlightListeners()
   }, 100)
-}
-
-let didLibwrapperRegister = false
-export const hookRemoteHighlight = (enabled) => {
-  if (enabled) Hooks.on('ready', debounceRefreshHighlightListeners)
-  else Hooks.off('ready', debounceRefreshHighlightListeners)
-
-  if (enabled) {
-    libWrapper.register(MODULE_ID, 'FormApplication.prototype._render', (wrapped, ...args) => {
-      removeHighlight()
-      return wrapped(...args)
-    }, 'WRAPPER')
-    libWrapper.register(MODULE_ID, 'Application.prototype._render', (wrapped, ...args) => {
-      const returned = wrapped(...args)
-      setTimeout(debounceRefreshHighlightListeners, 0.5 * SECOND)
-      return returned
-    }, 'WRAPPER')
-    didLibwrapperRegister = true
-  } else if (didLibwrapperRegister) {
-    libWrapper.unregister(MODULE_ID, 'FormApplication.prototype._render')
-    libWrapper.unregister(MODULE_ID, 'Application.prototype._render')
-    didLibwrapperRegister = false
-  }
 }

@@ -1,38 +1,48 @@
-import { hookRemoteHighlight, MODULE_ID } from './remote-highlight-ui.js'
+import {
+  additionalPlayerListContextOptions,
+  debounceRefreshHighlightListeners, onRenderPlayerList,
+  removeRemoteHighlightListeners
+} from './remote-highlight-ui.js'
+import { MODULE_ID, registerSettings, SECOND } from './settings.js'
 
 Hooks.on('init', () => {
-  game.settings.register(MODULE_ID, 'enable-for-this-user', {
-    name: `Enable for this user`,
-    hint: `When holding Control and middle-clicking / right-clicking / aux-clicking on a UI element, it will be highlighted for every other player.`,
-    scope: 'client',
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: hookRemoteHighlight
-  })
-  game.settings.register(MODULE_ID, 'keybinding-modifiers', {
-    name: `Modifier keys`,
-    hint: `Choose modifier keys required for the highlight to trigger on a middle-click (default Ctrl).`,
-    scope: 'client',
-    config: true,
-    type: String,
-    default: '["Control"]',
-    choices: {
-      '["Control"]': 'Control',
-      '["Control","Shift"]': 'Control + Shift',
-      '["Shift"]': 'Shift',
-    },
-  })
-  game.settings.register(MODULE_ID, 'allow-when-right-clicking', {
-    name: `Allow when right-clicking`,
-    hint: `Should this also trigger on e.g. Ctrl+Right-click?  (default false)`,
-    scope: 'client',
-    config: true,
-    type: Boolean,
-    default: false,
-  })
+  registerSettings()
+  registerConstantLibWrapperWraps()
 })
 
 Hooks.on('ready', () => {
   hookRemoteHighlight(game.settings.get(MODULE_ID, 'enable-for-this-user'))
 })
+
+Hooks.on('renderPlayerList', () => {
+  onRenderPlayerList()
+})
+
+let didLibWrapperRegister = false
+export const hookRemoteHighlight = (enabled) => {
+  if (enabled) debounceRefreshHighlightListeners()
+  else removeRemoteHighlightListeners()
+
+  if (enabled && !didLibWrapperRegister) {
+    libWrapper.register(MODULE_ID, 'FormApplication.prototype._render', (wrapped, ...args) => {
+      removeHighlight()
+      return wrapped(...args)
+    }, 'WRAPPER')
+    libWrapper.register(MODULE_ID, 'Application.prototype._render', (wrapped, ...args) => {
+      const returned = wrapped(...args)
+      setTimeout(debounceRefreshHighlightListeners, 0.5 * SECOND)
+      return returned
+    }, 'WRAPPER')
+    didLibWrapperRegister = true
+  } else if (didLibWrapperRegister) {
+    libWrapper.unregister(MODULE_ID, 'FormApplication.prototype._render')
+    libWrapper.unregister(MODULE_ID, 'Application.prototype._render')
+    didLibWrapperRegister = false
+  }
+}
+
+const registerConstantLibWrapperWraps = () => {
+  libWrapper.register(MODULE_ID, 'PlayerList.prototype._getUserContextOptions', (wrapped, ...args) => {
+    return wrapped(...args).concat(additionalPlayerListContextOptions())
+  }, 'WRAPPER')
+}

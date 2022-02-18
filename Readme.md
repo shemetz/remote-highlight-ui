@@ -35,7 +35,12 @@ the right tab will become activated so that you can see the highlight.
 If you're sent a highlight of something out of your view that can be scrolled to (e.g. a chat message from a few
 minutes ago), it will scroll into view.
 
-The highlight will normally be sent to all other users.
+The highlight will normally be sent to all other users;  if you want to show it only to a particular user, you can 
+right-click that user's name in the bottom left Players list and select "Highlight UI only for this player".
+
+![](metadata/highlight_only_user.png)
+![](metadata/highlight_only_user_active.png)
+![](metadata/highlight_only_user_stop.png)
 
 ## Implementation details for nerds
 
