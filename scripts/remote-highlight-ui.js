@@ -1,47 +1,36 @@
 import { generateUniqueSelector } from './generate-unique-selector.js'
-import { EXTRA_HIGHLIGHT_FREQUENCY, HIGHLIGHT_DURATION, MODULE_ID } from './settings.js'
+import {
+  EXTRA_HIGHLIGHT_FREQUENCY,
+  FAILED_HIGHLIGHT_DURATION,
+  HIGHLIGHT_DURATION,
+  HIGHLIGHT_PADDING,
+  MODULE_ID
+} from './settings.js'
 
 let userIdToOnlyHighlightFor = null
 
-const shouldPreventThisParentElementFromHidingOverflow = (elem) => {
-  return elem.matches('.main-controls')
-    || elem.matches('.directory-item h3')
-    || elem.matches('.directory-item h4')
-    || elem.matches('.window-app .window-header')
-    || elem.matches('.crb-style aside .sidebar') // pf2e char sheet sidebar
-    || elem.matches('.crb-style .sheet-body .sheet-content .inventory .inventory-list, .crb-style .sheet-body .sheet-content .inventory .inventory .inventory-list, .crb-style .sheet-body .sheet-content .inventory>.tab:not(.inventory), .crb-style .sheet-body .sheet-content>.tab:not(.inventory)') // pf2e char sheet sidebar
-    || elem.matches('#combat li.combatant .token-name') // combat tab
-    || elem.matches('.pf2e.sheet .sheet-body') // pf2e item sheet and such
-    || elem.matches('.pf2e.item.sheet form>article') // same
-    || elem.matches('.dice-tooltip .dice-rolls') // dice roll (pf2e/dnd5e)
-    || elem.matches('.dnd5e.sheet .items-list .item-name') // dnd5e inventory
-    || elem.matches('.tidy5e.sheet.actor .items-list .item .item-name') // tidy5e
-    || elem.matches('.tidy5e.sheet.actor .sheet-body') // same
-    || elem.matches('.tidy5e.sheet.actor .portrait') // same
-    || elem.matches('.tidy5e.sheet.actor #item-info-container') // same
-    || elem.matches('.tidy5e.sheet.actor .exhaustion-wrap') // same
-}
-
 let $currHighlitElement = null
 let flipExtraHighlightTimeout = null
+let darkOverlayWithHoleElement = null
 
 const addHighlight = ($element) => {
   if ($currHighlitElement) {
     // in case another highlight is already active
-    removeHighlight()
+    removeHighlight(true)
   }
+  // Fade out rest of screen
+  const targetElement = $element[0]
+  const targetBoundingRect = targetElement.getBoundingClientRect()
+  darkOverlayWithHoleElement = document.createElement('div')
+  darkOverlayWithHoleElement.classList.add('rhi-highlight-hole')
+  darkOverlayWithHoleElement.style.width = `${targetBoundingRect.width + HIGHLIGHT_PADDING}px`
+  darkOverlayWithHoleElement.style.height = `${targetBoundingRect.height + HIGHLIGHT_PADDING}px`
+  darkOverlayWithHoleElement.style.top = `${targetBoundingRect.top - (HIGHLIGHT_PADDING / 2)}px`
+  darkOverlayWithHoleElement.style.left = `${targetBoundingRect.left - (HIGHLIGHT_PADDING / 2)}px`
+  document.body.appendChild(darkOverlayWithHoleElement)
+
   $currHighlitElement = $element
-  $currHighlitElement.addClass('rhi-highlighted')
-  if ($currHighlitElement.css('position') !== 'absolute') {
-    $currHighlitElement.addClass('rhi-highlighted-position-relative')
-  }
-  $currHighlitElement.parents().each((i, elem) => {
-    const $elem = $(elem)
-    $elem.addClass('rhi-highlighted-parent-front')
-    if (shouldPreventThisParentElementFromHidingOverflow(elem)) {
-      $elem.addClass('rhi-highlighted-parent-hidden')
-    }
-  })
+
   // switch to that tab if needed
   const parentTab = $currHighlitElement.parents()
     .filter((i, e) => e.matches('.tab.sidebar-tab'))[0]
@@ -57,25 +46,29 @@ const addHighlight = ($element) => {
   // basic animation
   const flipExtraHighlight = () => {
     if (!$currHighlitElement) return
-    $currHighlitElement.toggleClass('rhi-highlighted-extra')
+    $(darkOverlayWithHoleElement).toggleClass('rhi-highlight-hole-extra')
     flipExtraHighlightTimeout = setTimeout(flipExtraHighlight, HIGHLIGHT_DURATION / EXTRA_HIGHLIGHT_FREQUENCY)
   }
   flipExtraHighlight()
 }
 
-export const removeHighlight = () => {
+export const removeHighlight = (addingAnother) => {
   if ($currHighlitElement) {
-    $currHighlitElement.removeClass('rhi-highlighted')
-    $currHighlitElement.removeClass('rhi-highlighted-position-relative')
-    $currHighlitElement.removeClass('rhi-highlighted-extra')
-    $currHighlitElement.parents().each((i, elem) => {
-      const $elem = $(elem)
-      $elem.removeClass('rhi-highlighted-parent-hidden')
-      $elem.removeClass('rhi-highlighted-parent-front')
-    })
     clearTimeout(flipExtraHighlightTimeout)
     flipExtraHighlightTimeout = null
     $currHighlitElement = null
+  }
+  if (darkOverlayWithHoleElement) {
+    const elementToRemove = darkOverlayWithHoleElement
+    darkOverlayWithHoleElement = null
+    if (!addingAnother) {
+      $(elementToRemove).toggleClass('rhi-highlight-hole-stop')
+      setTimeout(() => {
+        elementToRemove.remove()
+      }, 500)
+    } else {
+      elementToRemove.remove()
+    }
   }
 }
 
@@ -93,10 +86,25 @@ export const onSocketMessageHighlightSomething = (message) => {
   if ($element && $element[0]) {
     addHighlight($element)
     removeHighlightTimeout = setTimeout(() => {
-      removeHighlight()
+      removeHighlight(false)
     }, HIGHLIGHT_DURATION)
   } else {
-    removeHighlight()
+    removeHighlight(true)
+    // failed to find selector!
+    emitFailedHighlight()
+  }
+}
+
+export const onSocketMessageFailedHighlight = () => {
+  if ($currHighlitElement) {
+    $(darkOverlayWithHoleElement).toggleClass('rhi-highlight-hole-failed')
+    clearTimeout(flipExtraHighlightTimeout)
+    flipExtraHighlightTimeout = null
+    clearTimeout(removeHighlightTimeout)
+    removeHighlightTimeout = null
+    removeHighlightTimeout = setTimeout(() => {
+      removeHighlight(false)
+    }, FAILED_HIGHLIGHT_DURATION)
   }
 }
 
@@ -160,6 +168,16 @@ export const emitHighlight = (message) => {
   }
   game.socket.emit(`module.${MODULE_ID}`, msg)
   onSocketMessageHighlightSomething(msg)
+}
+
+/**
+ * message should have a 'selector' field, and a potential 'playerId' field
+ */
+export const emitFailedHighlight = () => {
+  const msg = {
+    type: 'FAILED_HIGHLIGHT',
+  }
+  game.socket.emit(`module.${MODULE_ID}`, msg)
 }
 
 let debounceEmitHighlightTimeout = null

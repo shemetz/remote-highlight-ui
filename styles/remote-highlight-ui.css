@@ -1,33 +1,30 @@
-/*highlighting an item by adding a dashed outline and darkening most things around it*/
-.rhi-highlighted {
-    box-shadow: 0 0 0 max(1000vh, 1000vw) rgba(0, 0, 0, 0.6) !important;
-    z-index: 999 !important;
-    outline-style: dashed !important;
-    outline-color: red !important;
-}
+/*highlighting the "hole" element by adding a dashed outline and darkening most things around it*/
+.rhi-highlight-hole {
+    box-shadow: rgba(33, 33, 33, 0.8) 0 0 1px 2px, rgba(33, 33, 33, 0.6) 0 0 0 5000px;
+    border-radius: 4px;
+    transition: all 0.3s ease-out;
+    z-index: 9997;
+    position: fixed;
 
-/*this enables the darkening to work better, but shouldn't replace things with
- absolute positioning because it'll make things wonky*/
-.rhi-highlighted-position-relative {
-    position: relative !important;
+    outline-style: dashed;
+    outline-color: red;
+    pointer-events: none
 }
 
 /*temporarily thicker highlight, for a primitive animation*/
-.rhi-highlighted-extra {
-    outline-width: thick !important;
+.rhi-highlight-hole-extra {
+    outline-width: thick;
 }
 
-/*parent elements of the highlighted element will have their overflow unset, to allow the dark box-shadow to
-expand further.  but this should not be applied to everything, e.g. shouldn't affect chatbox because we don't
-want it to overflow.*/
-.rhi-highlighted-parent-hidden {
-    overflow: unset !important;
+/*red background to mark as failed*/
+.rhi-highlight-hole-failed {
+    background-color: rgba(255, 0, 0, 0.8);
+    outline-width: thin;
+    outline-style: solid;
 }
 
-/*parent elements of the highlighted element will have their z-index increased.  usually this is harmless.
-it helps the dark box shadow cover more stuff.*/
-.rhi-highlighted-parent-front {
-    z-index: 998 !important;
+.rhi-highlight-hole-stop {
+    box-shadow: rgba(33, 33, 33, 0.5) 0 0 1px 2px, rgba(33, 33, 33, 0.1) 0 0 0 5000px;
 }
 
 /*used to mark a user in the player list as currently singled out for highlighting*/

@@ -1,10 +1,11 @@
 {
   "name": "remote-highlight-ui",
+  "id": "remote-highlight-ui",
   "title": "Remote Highlight UI",
   "description": "Allows users to highlight UI elements on others' screens.",
   "version": "1.1.0",
   "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "9",
+  "compatibleCoreVersion": "10",
   "esmodules": [
     "scripts/remote-highlight-ui.js",
     "scripts/hooks.js",
@@ -26,11 +27,24 @@
       "name": "lib-wrapper"
     }
   ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
+        "compatibility": {
+          "minimum": "1.12.7.0",
+          "compatible": "1.12.7.0"
+        }
+      }
+    ]
+  },
   "authors": [
     {
       "name": "shem",
-      "email": "itamarcu+foundry@gmail.com",
       "discord": "shem#0226",
+      "email": "itamarcu+foundry@gmail.com",
       "reddit": "u/Shemetz"
     }
   ],

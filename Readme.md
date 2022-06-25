@@ -38,9 +38,13 @@ minutes ago), it will scroll into view.
 The highlight will normally be sent to all other users;  if you want to show it only to a particular user, you can 
 right-click that user's name in the bottom left Players list and select "Highlight UI only for this player".
 
+If you try to highlight something and it "fails" for at least one player (while you're the GM) then the existing 
+highlight will turn red and stop early, to signal a failure.
+
 ![](metadata/highlight_only_user.png)
 ![](metadata/highlight_only_user_active.png)
 ![](metadata/highlight_only_user_stop.png)
+![](metadata/failed_highlight.png)
 
 ## Implementation details for nerds
 

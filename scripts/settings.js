@@ -3,7 +3,9 @@ import { hookRemoteHighlight } from './hooks.js'
 export const MODULE_ID = 'remote-highlight-ui'
 export const SECOND = 1000
 export const HIGHLIGHT_DURATION = 3 * SECOND
+export const FAILED_HIGHLIGHT_DURATION = 0.5 * SECOND
 export const EXTRA_HIGHLIGHT_FREQUENCY = 5
+export const HIGHLIGHT_PADDING = 10
 
 export const registerSettings = () => {
   game.settings.register(MODULE_ID, 'enable-for-this-user', {
