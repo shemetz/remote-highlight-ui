@@ -13,13 +13,52 @@ let $currHighlitElement = null
 let flipExtraHighlightTimeout = null
 let darkOverlayWithHoleElement = null
 
+const getFoundryTabOf = ($element) => {
+  return $element?.parents().filter((i, e) => e.matches('.tab.sidebar-tab'))[0]?.dataset.tab
+}
+
+const getPf2eTabOf = ($element) => {
+  return $element?.parents().filter((i, e) => e.matches('.sheet-content .tab'))[0]?.dataset.tab
+}
+
 const addHighlight = ($element) => {
   if ($currHighlitElement) {
     // in case another highlight is already active
     removeHighlight(true)
   }
+  $currHighlitElement = $element
+
+  // switch to that tab if needed
+  // foundry tab
+  const foundryTab = getFoundryTabOf($currHighlitElement)
+  if (foundryTab) {
+    const currentlyActiveTab = $('.tab.sidebar-tab.active')[0]?.dataset.tab
+    // normal ID doesn't work because of a core foundry bug, chat tab missing its id - so gotta use data-tab instead
+    if (currentlyActiveTab !== foundryTab) {
+      ui.sidebar.activateTab(foundryTab)
+    }
+  }
+  // pf2e tab
+  const pf2eTab = getPf2eTabOf($currHighlitElement)
+  if (pf2eTab) {
+    const sheetId = $currHighlitElement.parents().filter((i, e) => e.matches('.app.sheet'))[0]?.id
+    const actorId = sheetId.substring(sheetId.lastIndexOf('-') + 1)
+    const sheet = game.actors.get(actorId).sheet
+    const currentlyActiveTab = $('.sheet-navigation .active')[0]?.dataset.tab
+    if (currentlyActiveTab !== pf2eTab) {
+      sheet.activateTab(pf2eTab)
+    }
+  }
+
+  // scroll into view
+  $currHighlitElement[0].scrollIntoViewIfNeeded()
+
+  startHighlight()
+}
+
+const startHighlight = () => {
   // Fade out rest of screen
-  const targetElement = $element[0]
+  const targetElement = $currHighlitElement[0]
   const targetBoundingRect = targetElement.getBoundingClientRect()
   darkOverlayWithHoleElement = document.createElement('div')
   darkOverlayWithHoleElement.classList.add('rhi-highlight-hole')
@@ -28,20 +67,6 @@ const addHighlight = ($element) => {
   darkOverlayWithHoleElement.style.top = `${targetBoundingRect.top - (HIGHLIGHT_PADDING / 2)}px`
   darkOverlayWithHoleElement.style.left = `${targetBoundingRect.left - (HIGHLIGHT_PADDING / 2)}px`
   document.body.appendChild(darkOverlayWithHoleElement)
-
-  $currHighlitElement = $element
-
-  // switch to that tab if needed
-  const parentTab = $currHighlitElement.parents()
-    .filter((i, e) => e.matches('.tab.sidebar-tab'))[0]
-  if (parentTab) {
-    const currentlyActiveTab = $('.tab.sidebar-tab.active')[0]
-    if (currentlyActiveTab.id !== parentTab.id) {
-      ui.sidebar.tabs[parentTab.id].activate()
-    }
-  }
-  // scroll into view
-  $currHighlitElement[0].scrollIntoViewIfNeeded()
 
   // basic animation
   const flipExtraHighlight = () => {
@@ -83,7 +108,11 @@ export const onSocketMessageHighlightSomething = (message) => {
     removeHighlightTimeout = null
   }
   const $element = $(`${message.selector}`)
-  if ($element && $element[0]) {
+  const boundingRect = $element[0]?.getBoundingClientRect()
+  const foundryTab = getFoundryTabOf($element)
+  const pf2eTab = getPf2eTabOf($element)
+  const isRenderedSomewhere = boundingRect?.width > 0 || boundingRect?.height > 0 || !!foundryTab || !!pf2eTab
+  if ($element && $element[0] && isRenderedSomewhere) {
     addHighlight($element)
     removeHighlightTimeout = setTimeout(() => {
       removeHighlight(false)

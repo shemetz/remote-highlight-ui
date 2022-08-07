@@ -57,12 +57,18 @@ const generateQuerySelectorRecur = (elem, childStr, options) => {
 
   // add class
   if (className) {
-    const classes = className.split(/\s/)
+    let classes
+    if (className instanceof SVGAnimatedString) { // svgs are weird for some reason
+      classes = className
+    } else {
+      classes = className.split(/\s/)
+    }
     for (let i = 0; i < classes.length; i++) {
       if (typeof classes[i] === 'string'
         && classes[i].length > 0
         && classes[i] !== 'active' && classes[i] !== 'open' // temporary state classes
         && !classes[i].includes('rhi-highlighted')
+        && !classes[i].includes('hidden-to-others') // pf2e extra class for GM knowledge
       ) {
         str += `.${classes[i]}`
       }
