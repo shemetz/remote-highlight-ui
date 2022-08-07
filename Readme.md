@@ -10,7 +10,7 @@ Allows users to highlight UI elements on others' screens.
 To install, browse for it in the module browser, or [directly copy the manifest link for the latest release](https://github.com/itamarcu/remote-highlight-ui/releases/latest/download/module.json).
 
 
-![remote highlights demo 1](metadata/demo_1.gif)
+![remote highlights demo 1](metadata/demo_1_v2.gif)
 
 
 Useful for teaching people the UI remotely, or bringing attention to things (e.g. the end turn button).
