@@ -3,9 +3,13 @@
   "id": "remote-highlight-ui",
   "title": "Remote Highlight UI",
   "description": "Allows users to highlight UI elements on others' screens.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "10",
+  "compatibility": {
+    "minimum": "9",
+    "verified": "10"
+  },
   "esmodules": [
     "scripts/remote-highlight-ui.js",
     "scripts/hooks.js",
