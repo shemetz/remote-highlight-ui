@@ -51,7 +51,7 @@ const addHighlight = ($element) => {
   }
 
   // scroll into view
-  $currHighlitElement[0].scrollIntoViewIfNeeded()
+  $currHighlitElement[0].scrollIntoView()
 
   startHighlight()
 }
