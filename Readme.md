@@ -1,13 +1,13 @@
 # [Remote Highlight UI](https://foundryvtt.com/packages/remote-highlight-ui/)
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/itamarcu/remote-highlight-ui?style=for-the-badge)
-![GitHub Releases](https://img.shields.io/github/downloads/itamarcu/remote-highlight-ui/latest/total?style=for-the-badge)
-![GitHub All Releases](https://img.shields.io/github/downloads/itamarcu/remote-highlight-ui/total?style=for-the-badge&label=Downloads+total)  
-![Latest Supported Foundry Version](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://github.com/itamarcu/remote-highlight-ui/raw/master/module.json)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/shemetz/remote-highlight-ui?style=for-the-badge)
+![GitHub Releases](https://img.shields.io/github/downloads/shemetz/remote-highlight-ui/latest/total?style=for-the-badge)
+![GitHub All Releases](https://img.shields.io/github/downloads/shemetz/remote-highlight-ui/total?style=for-the-badge&label=Downloads+total)  
+![Latest Supported Foundry Version](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://github.com/shemetz/remote-highlight-ui/raw/master/module.json)
 
 Allows users to highlight UI elements on others' screens.
 
-To install, browse for it in the module browser, or [directly copy the manifest link for the latest release](https://github.com/itamarcu/remote-highlight-ui/releases/latest/download/module.json).
+To install, browse for it in the module browser, or [directly copy the manifest link for the latest release](https://github.com/shemetz/remote-highlight-ui/releases/latest/download/module.json).
 
 
 ![remote highlights demo 1](metadata/demo_1_v2.gif)
