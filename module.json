@@ -1,11 +1,8 @@
 {
-  "name": "remote-highlight-ui",
   "id": "remote-highlight-ui",
   "title": "Remote Highlight UI",
   "description": "Allows users to highlight UI elements on others' screens.",
-  "version": "1.2.1",
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "10",
+  "version": "1.2.2",
   "compatibility": {
     "minimum": "10",
     "verified": "11"
@@ -26,11 +23,6 @@
   "bugs": "https://github.com/shemetz/remote-highlight-ui/issues",
   "license": "https://github.com/shemetz/remote-highlight-ui/blob/master/License.txt",
   "changelog": "https://github.com/shemetz/remote-highlight-ui/blob/master/Changelog.md",
-  "dependencies": [
-    {
-      "name": "lib-wrapper"
-    }
-  ],
   "relationships": {
     "requires": [
       {
@@ -39,7 +31,7 @@
         "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
         "compatibility": {
           "minimum": "1.12.7.0",
-          "compatible": "1.12.7.0"
+          "verified": "1.12.12.1"
         }
       }
     ]
@@ -47,7 +39,7 @@
   "authors": [
     {
       "name": "shemetz",
-      "discord": "shemetz#0226",
+      "discord": "shemetz",
       "email": "itamarcu+foundry@gmail.com",
       "reddit": "u/Shemetz"
     }
