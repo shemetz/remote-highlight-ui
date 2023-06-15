@@ -7,8 +7,8 @@
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "10",
   "compatibility": {
-    "minimum": "9",
-    "verified": "10"
+    "minimum": "10",
+    "verified": "11"
   },
   "esmodules": [
     "scripts/remote-highlight-ui.js",
