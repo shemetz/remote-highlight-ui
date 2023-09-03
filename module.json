@@ -2,7 +2,7 @@
   "id": "remote-highlight-ui",
   "title": "Remote Highlight UI",
   "description": "Allows users to highlight UI elements on others' screens.",
-  "version": "1.2.2",
+  "version": "2.0.0",
   "compatibility": {
     "minimum": "10",
     "verified": "11"
@@ -31,7 +31,7 @@
         "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
         "compatibility": {
           "minimum": "1.12.7.0",
-          "verified": "1.12.12.1"
+          "verified": "1.12.13.1"
         }
       }
     ]

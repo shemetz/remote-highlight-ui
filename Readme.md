@@ -21,9 +21,6 @@ To activate, Ctrl+Aux-Click on a UI element.  The element will be highlighted on
 
 You can configure it in the setting to have it trigger with a Ctrl+Right-click or with Shift or Ctrl+Shift, too.
 
-**Important:** for now this is an "opt in" feature - after enabling the module you should also enable the setting for
-yourself as a user:
-
 ![](metadata/config_enable.png)
 
 ## Behavior
@@ -48,10 +45,11 @@ highlight will turn red and stop early, to signal a failure.
 
 ## Implementation details for nerds
 
-The module adds an `auxclick` event listener to nearly every single UI element. When those are triggered and Ctrl is
-held, the game will send a socket message to all other users with a JS selector string that uniquely identifies the
+The module adds an `auxclick` event listener to `document.body`. When it is triggered and Ctrl is held, the code will
+identify the element under the cursor, and then
+the game will send a socket message to all other users with a JS selector string that uniquely identifies the
 element.  Then, all users will have that element highlighted by having a few special CSS classes added to it.  It will
-also scroll to put the element in view if needed.
+also scroll to put the element in view if needed (centering it vertically).
 
 The unique selector is generated in [generate_unique_selector.js`](scripts/generate-unique-selector.js) which does 
 something similar to the debugger's right-click-to-copy-selector feature but with a lot of handcrafted optimizations and
@@ -66,6 +64,9 @@ checks because some of those hidden overflow things are important to keep (e.g. 
 
 More custom work and maintenance will likely be needed to continually improve the applicability of this feature to all
 UI elements.
+
+In the past, this module was crazy because it added thousands of event listeners, one to nearly every single UI element.
+Luckily, this is no longer the case!
 
 ## More gifs
 
