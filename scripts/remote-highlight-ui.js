@@ -50,9 +50,8 @@ const addHighlight = ($element) => {
     }
   }
 
-  // scroll into view
-  $currHighlitElement[0].scrollIntoView()
-
+  // scroll into view (center element vertically)
+  $currHighlitElement[0].scrollIntoView({ block: 'center' })
   startHighlight()
 }
 
