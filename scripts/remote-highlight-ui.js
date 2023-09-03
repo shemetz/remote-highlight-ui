@@ -4,7 +4,7 @@ import {
   FAILED_HIGHLIGHT_DURATION,
   HIGHLIGHT_DURATION,
   HIGHLIGHT_PADDING,
-  MODULE_ID
+  MODULE_ID,
 } from './settings.js'
 
 let userIdToOnlyHighlightFor = null
@@ -157,7 +157,7 @@ export const additionalPlayerListContextOptions = () => {
       callback: li => {
         userIdToOnlyHighlightFor = li[0].dataset.userId
         onRenderPlayerList()
-      }
+      },
     },
     {
       name: 'Stop highlighting only for this user',
@@ -169,7 +169,7 @@ export const additionalPlayerListContextOptions = () => {
       callback: () => {
         userIdToOnlyHighlightFor = null
         onRenderPlayerList()
-      }
+      },
     }]
 }
 
@@ -190,7 +190,7 @@ export const onRenderPlayerList = () => {
 export const emitHighlight = (message) => {
   const msg = {
     type: 'HIGHLIGHT_ELEMENT',
-    ...message
+    ...message,
   }
   if (userIdToOnlyHighlightFor) {
     msg.playerId = userIdToOnlyHighlightFor
