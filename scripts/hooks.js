@@ -5,7 +5,7 @@ import {
   onRenderPlayerList,
   removeHighlight,
 } from './remote-highlight-ui.js'
-import { MODULE_ID, registerSettings, SECOND } from './settings.js'
+import { MODULE_ID, registerSettings } from './settings.js'
 
 Hooks.on('init', () => {
   registerSettings()
@@ -13,7 +13,7 @@ Hooks.on('init', () => {
 })
 
 Hooks.on('ready', () => {
-  hookRemoteHighlight(game.settings.get(MODULE_ID, 'enable-for-this-user'))
+  hookRemoteHighlight(game.settings.get(MODULE_ID, 'enable-highlighting-for-others'))
 })
 
 Hooks.on('renderPlayerList', () => {

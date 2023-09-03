@@ -8,14 +8,22 @@ export const EXTRA_HIGHLIGHT_FREQUENCY = 5
 export const HIGHLIGHT_PADDING = 10
 
 export const registerSettings = () => {
-  game.settings.register(MODULE_ID, 'enable-for-this-user', {
-    name: `Enable for this user`,
+  game.settings.register(MODULE_ID, 'enable-highlighting-for-others', {
+    name: `Enable highlighting elements for other players`,
     hint: `When holding Control and middle-clicking / right-clicking / aux-clicking on a UI element, it will be highlighted for every other player.`,
     scope: 'client',
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
     onChange: hookRemoteHighlight
+  })
+  game.settings.register(MODULE_ID, 'enable-receiving-highlights', {
+    name: `Enable receiving highlights from other players`,
+    hint: `If you disable this, others won't be able to send highlights to you.`,
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true
   })
   game.settings.register(MODULE_ID, 'keybinding-modifiers', {
     name: `Modifier keys`,

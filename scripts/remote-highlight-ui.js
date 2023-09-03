@@ -102,6 +102,9 @@ let removeHighlightTimeout = null
  * Highlight the "End Turn" button for 1 second, for the current player
  */
 export const onSocketMessageHighlightSomething = (message) => {
+  if (!game.settings.get(MODULE_ID, 'enable-receiving-highlights')) {
+    return
+  }
   if (removeHighlightTimeout) {
     clearTimeout(removeHighlightTimeout)
     removeHighlightTimeout = null
@@ -149,7 +152,7 @@ export const additionalPlayerListContextOptions = () => {
       icon: '<i class="fas fa-bullseye"></i>',
       condition: li => {
         const thatUserId = li[0].dataset.userId
-        return game.settings.get(MODULE_ID, 'enable-for-this-user')
+        return game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
           && userIdToOnlyHighlightFor !== thatUserId
           && thatUserId !== game.user.id
       },
@@ -162,7 +165,7 @@ export const additionalPlayerListContextOptions = () => {
       name: 'Stop highlighting only for this user',
       icon: '<i class="fas fa-ban"></i>',
       condition: li => {
-        return game.settings.get(MODULE_ID, 'enable-for-this-user')
+        return game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
           && userIdToOnlyHighlightFor === li[0].dataset.userId
       },
       callback: () => {
