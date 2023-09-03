@@ -21,8 +21,6 @@ To activate, Ctrl+Aux-Click on a UI element.  The element will be highlighted on
 
 You can configure it in the setting to have it trigger with a Ctrl+Right-click or with Shift or Ctrl+Shift, too.
 
-![](metadata/config_enable.png)
-
 ## Behavior
 Once you highlight an element, it will transmit the highlight to all players who have that element in their UI.
 
