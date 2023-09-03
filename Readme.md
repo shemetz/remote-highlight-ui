@@ -71,3 +71,5 @@ Luckily, this is no longer the case!
 ![remote highlights demo 3 (pathfinder character sheet)](metadata/demo_3.gif)
 
 ![remote highlights demo 2](metadata/demo_2.gif)
+
+(The above gif is slightly outdated - nowadays if an element isn't found for the player, the GM will see a red square to be notified)
