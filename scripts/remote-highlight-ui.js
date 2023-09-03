@@ -226,41 +226,26 @@ const debounceEmitHighlight = (elem) => {
  *
  * Emit remote-highlight-UI message, and also do it locally, and also refresh listeners for the future
  */
-const onElementAuxClick = (event) => {
+const onAuxClick = (event) => {
   if (event.button === 2 && !game.settings.get(MODULE_ID, 'allow-when-right-clicking')) return
   const heldModifiers = KeyboardManager.getKeyboardEventContext(event).modifiers
   if (!areKeybindingModifierKeysFitting(heldModifiers)) return
-  const elem = event.currentTarget
+
+  // ohmygosh this line makes things so much easier
+  // the element under the cursor is found based on the cursor's screen position
+  // - if no element, return.
+  // - if multiple elements, this will pick the "topmost", probably.
+  const elem = document.elementFromPoint(event.x, event.y)
+  if (elem === null || elem === undefined) return
+
   event.stopPropagation()
   event.preventDefault()
   debounceEmitHighlight(elem)
-  debounceRefreshHighlightListeners()
 }
 
-export const refreshRemoteHighlightListeners = () => {
-  // EVERY element on the page can be highlighted (O_o) so we'll try to not call this function super often
-  $('*').each((i, elem) => {
-    // avoid if it's stuff that really shouldn't need highlighting
-    if (['HTML', 'BODY', 'CANVAS', 'SECTION'].includes(elem.tagName)) return
-    elem.removeEventListener('auxclick', onElementAuxClick)
-    elem.addEventListener('auxclick', onElementAuxClick)
-  })
+export const addRemoteHighlightListener = () => {
+  document.body.addEventListener('auxclick', onAuxClick)
 }
-
-export const removeRemoteHighlightListeners = () => {
-  $('*').each((i, elem) => {
-    if (['HTML', 'BODY', 'CANVAS', 'SECTION'].includes(elem.tagName)) return
-    elem.removeEventListener('auxclick', onElementAuxClick)
-  })
-}
-
-let debounceRefreshTimeout = null
-export const debounceRefreshHighlightListeners = () => {
-  if (debounceRefreshTimeout) {
-    clearTimeout(debounceRefreshTimeout)
-  }
-  debounceRefreshTimeout = setTimeout(() => {
-    debounceRefreshTimeout = null
-    refreshRemoteHighlightListeners()
-  }, 100)
+export const removeRemoteHighlightListener = () => {
+  document.body.removeEventListener('auxclick', onAuxClick)
 }
