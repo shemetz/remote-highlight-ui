@@ -4,7 +4,7 @@ import {
   addRemoteHighlightListener,
   removeRemoteHighlightListener,
   onRenderPlayerList,
-  removeHighlight,
+  stopHighlight,
 } from './remote-highlight-ui.js'
 import { MODULE_ID, registerSettings } from './settings.js'
 
@@ -29,7 +29,7 @@ export const hookRemoteHighlight = (enabled) => {
 
   if (enabled && !didLibWrapperRegister) {
     libWrapper.register(MODULE_ID, 'FormApplication.prototype._render', (wrapped, ...args) => {
-      removeHighlight()
+      stopHighlight()
       return wrapped(...args)
     }, 'WRAPPER')
     didLibWrapperRegister = true

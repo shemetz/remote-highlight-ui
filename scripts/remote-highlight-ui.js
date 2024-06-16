@@ -2,6 +2,7 @@ import { generateUniqueSelector } from './generate-unique-selector.js'
 import {
   EXTRA_HIGHLIGHT_FREQUENCY,
   FAILED_HIGHLIGHT_DURATION,
+  TRANSITION_DURATION,
   HIGHLIGHT_DURATION,
   HIGHLIGHT_PADDING,
   MODULE_ID,
@@ -35,6 +36,8 @@ const addHighlight = ($element) => {
     stopHighlight(true)
   }
   $currHighlitElement = $element
+  $(overlayElement).removeClass('rhui-highlight-hole-failed')
+  $(overlayElement).removeClass('rhui-highlight-hole-extra')
 
   // switch to that tab if needed
   // foundry tab
@@ -58,9 +61,56 @@ const addHighlight = ($element) => {
     }
   }
 
-  // scroll into view (center element vertically)
-  $currHighlitElement[0].scrollIntoView({ block: 'center', behavior: 'smooth' })
-  startHighlight()
+  // scroll into view (center element vertically), and when that's done, start highlight
+  const scrollableParent = getScrollParent($currHighlitElement[0])
+  if (!scrollableParent || scrollableParent === document.body || scrollableParent === document.documentElement) {
+    // doesn't need any scrolling
+    startHighlight()
+  } else if ('onscrollend' in window && scrollableParent) {
+    // scroll smoothly, and when done, start highlight.
+
+    let didStartScrolling = false
+    let noScrollTimeout
+    const onScrollStart = () => {
+      didStartScrolling = true
+      clearTimeout(noScrollTimeout)
+    }
+    const onScrollEnd = () => startHighlight()
+    scrollableParent.addEventListener('scroll', onScrollStart, { once: true })
+    scrollableParent.addEventListener('scrollend', onScrollEnd, { once: true })
+    // edge case:  if scrolling is not needed, this event will never fire, so we need a fallback
+    noScrollTimeout = setTimeout(() => {
+      if (!didStartScrolling) {
+        startHighlight()
+        scrollableParent.removeEventListener('scroll', onScrollStart)
+        scrollableParent.removeEventListener('scrollend', onScrollEnd)
+      }
+    }, 50) // needs to be >31ms at least
+
+    $currHighlitElement[0].scrollIntoView({ block: 'center', behavior: 'smooth' })
+  } else {
+    // fallback behavior:  scroll instantly and start highlight
+    $currHighlitElement[0].scrollIntoView({ block: 'center', behavior: 'instant' })
+    startHighlight()
+  }
+}
+
+const getScrollParent = (node) => {
+  const parents = (_node, ps) => {
+    if (_node.parentNode === null) { return ps }
+    return parents(_node.parentNode, ps.concat([_node]))
+  }
+  const style = (_node, prop) => getComputedStyle(_node, null).getPropertyValue(prop)
+  const overflow = _node => style(_node, 'overflow') + style(_node, 'overflow-y') + style(_node, 'overflow-x')
+  const scroll = _node => /(auto|scroll)/.test(overflow(_node))
+
+  const ps = parents(node.parentNode, [])
+  for (let i = 0; i < ps.length; i += 1) {
+    if (scroll(ps[i])) {
+      return ps[i]
+    }
+  }
+  return document.scrollingElement || document.documentElement
 }
 
 const centerHighlightOnElement = (targetElement) => {
@@ -80,24 +130,22 @@ const startHighlight = () => {
   const flipExtraHighlight = () => {
     if (!$currHighlitElement) return
     $(overlayElement).toggleClass('rhui-highlight-hole-extra')
+    clearTimeout(flipExtraHighlightTimeout)
     flipExtraHighlightTimeout = setTimeout(flipExtraHighlight, HIGHLIGHT_DURATION / EXTRA_HIGHLIGHT_FREQUENCY)
   }
   flipExtraHighlight()
 }
 
 export const stopHighlight = (addingAnother) => {
-  if ($currHighlitElement) {
-    clearTimeout(flipExtraHighlightTimeout)
-    flipExtraHighlightTimeout = null
-    $currHighlitElement = null
-  }
+  clearTimeout(flipExtraHighlightTimeout)
+  $currHighlitElement = null
   if (overlayElement && !addingAnother) {
     $(overlayElement).removeClass('rhui-highlight-hole-active')
     $(overlayElement).removeClass('rhui-highlight-hole-failed')
     $(overlayElement).removeClass('rhui-highlight-hole-extra')
     resetOverlayTimeout = setTimeout(() => {
       centerHighlightOnElement(document.body)
-    }, 0.31 * 1000)
+    }, TRANSITION_DURATION + 50)
   }
 }
 
@@ -108,14 +156,8 @@ export const onSocketMessageHighlightSomething = (message) => {
   if (!game.settings.get(MODULE_ID, 'enable-receiving-highlights')) {
     return
   }
-  if (stopHighlightTimeout) {
-    clearTimeout(stopHighlightTimeout)
-    stopHighlightTimeout = null
-  }
-  if (resetOverlayTimeout) {
-    clearTimeout(resetOverlayTimeout)
-    resetOverlayTimeout = null
-  }
+  clearTimeout(stopHighlightTimeout)
+  clearTimeout(resetOverlayTimeout)
   const $element = $(`${message.selector}`)
   const boundingRect = $element[0]?.getBoundingClientRect()
   const foundryTab = getFoundryTabOf($element)
@@ -135,10 +177,10 @@ export const onSocketMessageHighlightSomething = (message) => {
 
 export const onSocketMessageFailedHighlight = () => {
   if ($currHighlitElement) {
-    $(overlayElement).toggleClass('rhui-highlight-hole-failed')
+    $(overlayElement).removeClass('rhui-highlight-hole-extra')
     clearTimeout(flipExtraHighlightTimeout)
-    flipExtraHighlightTimeout = null
     clearTimeout(stopHighlightTimeout)
+    $(overlayElement).addClass('rhui-highlight-hole-failed')
     stopHighlightTimeout = setTimeout(() => {
       stopHighlight(false)
     }, FAILED_HIGHLIGHT_DURATION)
@@ -217,9 +259,7 @@ export const emitFailedHighlight = () => {
 
 let debounceEmitHighlightTimeout = null
 const debounceEmitHighlight = (elem) => {
-  if (debounceEmitHighlightTimeout) {
-    clearTimeout(debounceEmitHighlightTimeout)
-  }
+  clearTimeout(debounceEmitHighlightTimeout)
   debounceEmitHighlightTimeout = setTimeout(() => {
     debounceEmitHighlightTimeout = null
     const selector = generateUniqueSelector(elem)
