@@ -7,11 +7,19 @@ import {
   MODULE_ID,
 } from './settings.js'
 
+let overlayElement // after init, will always be defined
 let userIdToOnlyHighlightFor = null
-
 let $currHighlitElement = null
+
 let flipExtraHighlightTimeout = null
-let darkOverlayWithHoleElement = null
+let removeHighlightTimeout = null
+let resetOverlayTimeout = null
+
+export const initOverlay = () => {
+  overlayElement = document.createElement('div')
+  overlayElement.classList.add('rhi-overlay')
+  document.body.appendChild(overlayElement)
+}
 
 const getFoundryTabOf = ($element) => {
   return $element?.parents().filter((i, e) => e.matches('.tab.sidebar-tab'))[0]?.dataset.tab
@@ -51,26 +59,27 @@ const addHighlight = ($element) => {
   }
 
   // scroll into view (center element vertically)
-  $currHighlitElement[0].scrollIntoView({ block: 'center' })
+  $currHighlitElement[0].scrollIntoView({ block: 'center', behavior: 'smooth' })
   startHighlight()
 }
 
-const startHighlight = () => {
-  // Fade out rest of screen
-  const targetElement = $currHighlitElement[0]
+const centerHighlightOnElement = (targetElement) => {
   const targetBoundingRect = targetElement.getBoundingClientRect()
-  darkOverlayWithHoleElement = document.createElement('div')
-  darkOverlayWithHoleElement.classList.add('rhi-highlight-hole')
-  darkOverlayWithHoleElement.style.width = `${targetBoundingRect.width + HIGHLIGHT_PADDING}px`
-  darkOverlayWithHoleElement.style.height = `${targetBoundingRect.height + HIGHLIGHT_PADDING}px`
-  darkOverlayWithHoleElement.style.top = `${targetBoundingRect.top - (HIGHLIGHT_PADDING / 2)}px`
-  darkOverlayWithHoleElement.style.left = `${targetBoundingRect.left - (HIGHLIGHT_PADDING / 2)}px`
-  document.body.appendChild(darkOverlayWithHoleElement)
+  overlayElement.style.width = `${targetBoundingRect.width + HIGHLIGHT_PADDING}px`
+  overlayElement.style.height = `${targetBoundingRect.height + HIGHLIGHT_PADDING}px`
+  overlayElement.style.top = `${targetBoundingRect.top - (HIGHLIGHT_PADDING / 2)}px`
+  overlayElement.style.left = `${targetBoundingRect.left - (HIGHLIGHT_PADDING / 2)}px`
+}
+
+const startHighlight = () => {
+  // Fade out rest of screen, except rectangle around target element
+  centerHighlightOnElement($currHighlitElement[0])
+  overlayElement.classList.add('rhi-highlight-hole-active')
 
   // basic animation
   const flipExtraHighlight = () => {
     if (!$currHighlitElement) return
-    $(darkOverlayWithHoleElement).toggleClass('rhi-highlight-hole-extra')
+    $(overlayElement).toggleClass('rhi-highlight-hole-extra')
     flipExtraHighlightTimeout = setTimeout(flipExtraHighlight, HIGHLIGHT_DURATION / EXTRA_HIGHLIGHT_FREQUENCY)
   }
   flipExtraHighlight()
@@ -82,21 +91,15 @@ export const removeHighlight = (addingAnother) => {
     flipExtraHighlightTimeout = null
     $currHighlitElement = null
   }
-  if (darkOverlayWithHoleElement) {
-    const elementToRemove = darkOverlayWithHoleElement
-    darkOverlayWithHoleElement = null
-    if (!addingAnother) {
-      $(elementToRemove).toggleClass('rhi-highlight-hole-stop')
-      setTimeout(() => {
-        elementToRemove.remove()
-      }, 500)
-    } else {
-      elementToRemove.remove()
-    }
+  if (overlayElement && !addingAnother) {
+    $(overlayElement).removeClass('rhi-highlight-hole-active')
+    $(overlayElement).removeClass('rhi-highlight-hole-failed')
+    $(overlayElement).removeClass('rhi-highlight-hole-extra')
+    resetOverlayTimeout = setTimeout(() => {
+      centerHighlightOnElement(document.body)
+    }, 0.31 * 1000)
   }
 }
-
-let removeHighlightTimeout = null
 
 /**
  * Highlight the "End Turn" button for 1 second, for the current player
@@ -109,6 +112,10 @@ export const onSocketMessageHighlightSomething = (message) => {
     clearTimeout(removeHighlightTimeout)
     removeHighlightTimeout = null
   }
+  if (resetOverlayTimeout) {
+    clearTimeout(resetOverlayTimeout)
+    resetOverlayTimeout = null
+  }
   const $element = $(`${message.selector}`)
   const boundingRect = $element[0]?.getBoundingClientRect()
   const foundryTab = getFoundryTabOf($element)
@@ -120,7 +127,7 @@ export const onSocketMessageHighlightSomething = (message) => {
       removeHighlight(false)
     }, HIGHLIGHT_DURATION)
   } else {
-    removeHighlight(true)
+    removeHighlight(false)
     // failed to find selector!
     emitFailedHighlight()
   }
@@ -128,11 +135,10 @@ export const onSocketMessageHighlightSomething = (message) => {
 
 export const onSocketMessageFailedHighlight = () => {
   if ($currHighlitElement) {
-    $(darkOverlayWithHoleElement).toggleClass('rhi-highlight-hole-failed')
+    $(overlayElement).toggleClass('rhi-highlight-hole-failed')
     clearTimeout(flipExtraHighlightTimeout)
     flipExtraHighlightTimeout = null
     clearTimeout(removeHighlightTimeout)
-    removeHighlightTimeout = null
     removeHighlightTimeout = setTimeout(() => {
       removeHighlight(false)
     }, FAILED_HIGHLIGHT_DURATION)
@@ -177,12 +183,10 @@ export const additionalPlayerListContextOptions = () => {
 
 export const onRenderPlayerList = () => {
   // unbold previous
-  $(`ol#player-list > li`)
-    .removeClass('rhi-only-highlight-for-this-user')
+  $(`ol#player-list > li`).removeClass('rhi-only-highlight-for-this-user')
   // bold current
   if (userIdToOnlyHighlightFor) {
-    $(`ol#player-list > li[data-user-id="${userIdToOnlyHighlightFor}"]`)
-      .addClass('rhi-only-highlight-for-this-user')
+    $(`ol#player-list > li[data-user-id="${userIdToOnlyHighlightFor}"]`).addClass('rhi-only-highlight-for-this-user')
   }
 }
 

@@ -1,14 +1,19 @@
-/*highlighting the "hole" element by adding a dashed outline and darkening most things around it*/
-.rhi-highlight-hole {
-    box-shadow: rgba(33, 33, 33, 0.8) 0 0 1px 2px, rgba(33, 33, 33, 0.6) 0 0 0 5000px;
+.rhi-overlay {
+    box-shadow: rgba(33, 33, 33, 0.0) 0 0 1px 2px, rgba(33, 33, 33, 0.0) 0 0 0 5000px;
     border-radius: 4px;
     transition: all 0.3s ease-out;
     z-index: 9997;
     position: fixed;
 
     outline-style: dashed;
-    outline-color: red;
+    outline-color: transparent;
     pointer-events: none
+}
+
+/*highlighting the "hole" element by adding a dashed outline and darkening most things around it*/
+.rhi-highlight-hole-active {
+    box-shadow: rgba(33, 33, 33, 0.8) 0 0 1px 2px, rgba(33, 33, 33, 0.6) 0 0 0 5000px;
+    outline-color: red;
 }
 
 /*temporarily thicker highlight, for a primitive animation*/

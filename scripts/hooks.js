@@ -1,4 +1,5 @@
 import {
+  initOverlay,
   additionalPlayerListContextOptions,
   addRemoteHighlightListener,
   removeRemoteHighlightListener,
@@ -10,6 +11,7 @@ import { MODULE_ID, registerSettings } from './settings.js'
 Hooks.on('init', () => {
   registerSettings()
   registerConstantLibWrapperWraps()
+  initOverlay()
 })
 
 Hooks.on('ready', () => {
