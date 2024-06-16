@@ -12,12 +12,12 @@ let userIdToOnlyHighlightFor = null
 let $currHighlitElement = null
 
 let flipExtraHighlightTimeout = null
-let removeHighlightTimeout = null
+let stopHighlightTimeout = null
 let resetOverlayTimeout = null
 
 export const initOverlay = () => {
   overlayElement = document.createElement('div')
-  overlayElement.classList.add('rhi-overlay')
+  overlayElement.classList.add('rhui-overlay')
   document.body.appendChild(overlayElement)
 }
 
@@ -25,14 +25,14 @@ const getFoundryTabOf = ($element) => {
   return $element?.parents().filter((i, e) => e.matches('.tab.sidebar-tab'))[0]?.dataset.tab
 }
 
-const getPf2eTabOf = ($element) => {
+const getPf2eSheetTabOf = ($element) => {
   return $element?.parents().filter((i, e) => e.matches('.sheet-content .tab'))[0]?.dataset.tab
 }
 
 const addHighlight = ($element) => {
   if ($currHighlitElement) {
     // in case another highlight is already active
-    removeHighlight(true)
+    stopHighlight(true)
   }
   $currHighlitElement = $element
 
@@ -46,15 +46,15 @@ const addHighlight = ($element) => {
       ui.sidebar.activateTab(foundryTab)
     }
   }
-  // pf2e tab
-  const pf2eTab = getPf2eTabOf($currHighlitElement)
-  if (pf2eTab) {
+  // pf2e sheet tab
+  const pf2eSheetTab = getPf2eSheetTabOf($currHighlitElement)
+  if (pf2eSheetTab) {
     const sheetId = $currHighlitElement.parents().filter((i, e) => e.matches('.app.sheet'))[0]?.id
     const actorId = sheetId.substring(sheetId.lastIndexOf('-') + 1)
     const sheet = game.actors.get(actorId).sheet
     const currentlyActiveTab = $('.sheet-navigation .active')[0]?.dataset.tab
-    if (currentlyActiveTab !== pf2eTab) {
-      sheet.activateTab(pf2eTab)
+    if (currentlyActiveTab !== pf2eSheetTab) {
+      sheet.activateTab(pf2eSheetTab)
     }
   }
 
@@ -74,27 +74,27 @@ const centerHighlightOnElement = (targetElement) => {
 const startHighlight = () => {
   // Fade out rest of screen, except rectangle around target element
   centerHighlightOnElement($currHighlitElement[0])
-  overlayElement.classList.add('rhi-highlight-hole-active')
+  overlayElement.classList.add('rhui-highlight-hole-active')
 
   // basic animation
   const flipExtraHighlight = () => {
     if (!$currHighlitElement) return
-    $(overlayElement).toggleClass('rhi-highlight-hole-extra')
+    $(overlayElement).toggleClass('rhui-highlight-hole-extra')
     flipExtraHighlightTimeout = setTimeout(flipExtraHighlight, HIGHLIGHT_DURATION / EXTRA_HIGHLIGHT_FREQUENCY)
   }
   flipExtraHighlight()
 }
 
-export const removeHighlight = (addingAnother) => {
+export const stopHighlight = (addingAnother) => {
   if ($currHighlitElement) {
     clearTimeout(flipExtraHighlightTimeout)
     flipExtraHighlightTimeout = null
     $currHighlitElement = null
   }
   if (overlayElement && !addingAnother) {
-    $(overlayElement).removeClass('rhi-highlight-hole-active')
-    $(overlayElement).removeClass('rhi-highlight-hole-failed')
-    $(overlayElement).removeClass('rhi-highlight-hole-extra')
+    $(overlayElement).removeClass('rhui-highlight-hole-active')
+    $(overlayElement).removeClass('rhui-highlight-hole-failed')
+    $(overlayElement).removeClass('rhui-highlight-hole-extra')
     resetOverlayTimeout = setTimeout(() => {
       centerHighlightOnElement(document.body)
     }, 0.31 * 1000)
@@ -108,9 +108,9 @@ export const onSocketMessageHighlightSomething = (message) => {
   if (!game.settings.get(MODULE_ID, 'enable-receiving-highlights')) {
     return
   }
-  if (removeHighlightTimeout) {
-    clearTimeout(removeHighlightTimeout)
-    removeHighlightTimeout = null
+  if (stopHighlightTimeout) {
+    clearTimeout(stopHighlightTimeout)
+    stopHighlightTimeout = null
   }
   if (resetOverlayTimeout) {
     clearTimeout(resetOverlayTimeout)
@@ -119,15 +119,15 @@ export const onSocketMessageHighlightSomething = (message) => {
   const $element = $(`${message.selector}`)
   const boundingRect = $element[0]?.getBoundingClientRect()
   const foundryTab = getFoundryTabOf($element)
-  const pf2eTab = getPf2eTabOf($element)
-  const isRenderedSomewhere = boundingRect?.width > 0 || boundingRect?.height > 0 || !!foundryTab || !!pf2eTab
+  const pf2eSheetTab = getPf2eSheetTabOf($element)
+  const isRenderedSomewhere = boundingRect?.width > 0 || boundingRect?.height > 0 || !!foundryTab || !!pf2eSheetTab
   if ($element && $element[0] && isRenderedSomewhere) {
     addHighlight($element)
-    removeHighlightTimeout = setTimeout(() => {
-      removeHighlight(false)
+    stopHighlightTimeout = setTimeout(() => {
+      stopHighlight(false)
     }, HIGHLIGHT_DURATION)
   } else {
-    removeHighlight(false)
+    stopHighlight(false)
     // failed to find selector!
     emitFailedHighlight()
   }
@@ -135,12 +135,12 @@ export const onSocketMessageHighlightSomething = (message) => {
 
 export const onSocketMessageFailedHighlight = () => {
   if ($currHighlitElement) {
-    $(overlayElement).toggleClass('rhi-highlight-hole-failed')
+    $(overlayElement).toggleClass('rhui-highlight-hole-failed')
     clearTimeout(flipExtraHighlightTimeout)
     flipExtraHighlightTimeout = null
-    clearTimeout(removeHighlightTimeout)
-    removeHighlightTimeout = setTimeout(() => {
-      removeHighlight(false)
+    clearTimeout(stopHighlightTimeout)
+    stopHighlightTimeout = setTimeout(() => {
+      stopHighlight(false)
     }, FAILED_HIGHLIGHT_DURATION)
   }
 }
@@ -183,10 +183,10 @@ export const additionalPlayerListContextOptions = () => {
 
 export const onRenderPlayerList = () => {
   // unbold previous
-  $(`ol#player-list > li`).removeClass('rhi-only-highlight-for-this-user')
+  $(`ol#player-list > li`).removeClass('rhui-only-highlight-for-this-user')
   // bold current
   if (userIdToOnlyHighlightFor) {
-    $(`ol#player-list > li[data-user-id="${userIdToOnlyHighlightFor}"]`).addClass('rhi-only-highlight-for-this-user')
+    $(`ol#player-list > li[data-user-id="${userIdToOnlyHighlightFor}"]`).addClass('rhui-only-highlight-for-this-user')
   }
 }
 

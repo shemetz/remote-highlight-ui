@@ -1,4 +1,4 @@
-.rhi-overlay {
+.rhui-overlay {
     box-shadow: rgba(33, 33, 33, 0.0) 0 0 1px 2px, rgba(33, 33, 33, 0.0) 0 0 0 5000px;
     border-radius: 4px;
     transition: all 0.3s ease-out;
@@ -11,29 +11,29 @@
 }
 
 /*highlighting the "hole" element by adding a dashed outline and darkening most things around it*/
-.rhi-highlight-hole-active {
+.rhui-highlight-hole-active {
     box-shadow: rgba(33, 33, 33, 0.8) 0 0 1px 2px, rgba(33, 33, 33, 0.6) 0 0 0 5000px;
     outline-color: red;
 }
 
 /*temporarily thicker highlight, for a primitive animation*/
-.rhi-highlight-hole-extra {
+.rhui-highlight-hole-extra {
     outline-width: thick;
 }
 
 /*red background to mark as failed*/
-.rhi-highlight-hole-failed {
+.rhui-highlight-hole-failed {
     background-color: rgba(255, 0, 0, 0.8);
     outline-width: thin;
     outline-style: solid;
 }
 
-.rhi-highlight-hole-stop {
+.rhui-highlight-hole-stop {
     box-shadow: rgba(33, 33, 33, 0.5) 0 0 1px 2px, rgba(33, 33, 33, 0.1) 0 0 0 5000px;
 }
 
 /*used to mark a user in the player list as currently singled out for highlighting*/
-.rhi-only-highlight-for-this-user {
+.rhui-only-highlight-for-this-user {
     outline-color: red;
     outline-style: auto;
 }

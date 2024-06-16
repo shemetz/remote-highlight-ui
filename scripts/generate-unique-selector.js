@@ -67,7 +67,7 @@ const generateQuerySelectorRecur = (elem, childStr, options) => {
       if (typeof classes[i] === 'string'
         && classes[i].length > 0
         && classes[i] !== 'active' && classes[i] !== 'open' // temporary state classes
-        && !classes[i].includes('rhi-highlighted')
+        && !classes[i].includes('rhui-highlighted')
         && !classes[i].includes('hidden-to-others') // pf2e extra class for GM knowledge
       ) {
         str += `.${classes[i]}`
