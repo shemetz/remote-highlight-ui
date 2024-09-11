@@ -36,6 +36,9 @@ export const toggleHighlightTool = () => {
   } else {
     orangeBoxPreviewOverlayElement.classList.remove('rhui-preview')
   }
+  const highlightTool = ui.controls.controls.find(c => c.name === 'token').tools.find(t => t.name === 'RemoteHighlight')
+  highlightTool.active = isHighlightToolActive
+  ui.controls.render()
 }
 
 const getFoundryTabOf = ($element) => {
@@ -249,21 +252,6 @@ export const onRenderPlayerList = () => {
   }
 }
 
-Hooks.on('getSceneControlButtons', controls => {
-  if (!game.settings.get(MODULE_ID, 'enable-highlighting-for-others')) return
-
-  const tokenToolbar = controls.find(c => c.name === 'token').tools
-  tokenToolbar.splice(tokenToolbar.length - 1, 0, {
-    name: 'RemoteHighlight',
-    title: 'Remote Highlight',
-    icon: 'fas fa-highlighter',
-    button: true,
-    toggle: true,
-    active: isHighlightToolActive,
-    onClick: toggleHighlightTool,
-  })
-})
-
 /**
  * message should have a 'selector' field, and a potential 'playerId' field
  */
@@ -329,9 +317,6 @@ const onClick = (event) => {
   if (!isHighlightToolActive) return
 
   toggleHighlightTool()
-  const highlightTool = ui.controls.controls.find(c => c.name === 'token').tools.find(t => t.name === 'RemoteHighlight')
-  highlightTool.active = false
-  ui.controls.render()
 
   onSuccessfulHighlightClick(event)
 }

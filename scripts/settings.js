@@ -1,4 +1,5 @@
-import { hookRemoteHighlight } from './hooks.js'
+import { enableHighlighting } from './hooks.js'
+import { toggleHighlightTool } from './remote-highlight-ui.js'
 
 export const MODULE_ID = 'remote-highlight-ui'
 export const SECOND = 1000
@@ -16,7 +17,7 @@ export const registerSettings = () => {
     config: true,
     type: Boolean,
     default: true,
-    onChange: hookRemoteHighlight
+    onChange: enableHighlighting
   })
   game.settings.register(MODULE_ID, 'enable-receiving-highlights', {
     name: `Enable receiving highlights from other players`,
@@ -28,7 +29,7 @@ export const registerSettings = () => {
   })
   game.settings.register(MODULE_ID, 'keybinding-modifiers', {
     name: `Modifier keys`,
-    hint: `Choose modifier keys required for the highlight to trigger on a middle-click (default Ctrl).`,
+    hint: `Choose modifier keys required for the highlight to trigger on a middle-click (default: Control).`,
     scope: 'client',
     config: true,
     type: String,
@@ -46,5 +47,11 @@ export const registerSettings = () => {
     config: true,
     type: Boolean,
     default: false,
+  })
+  game.keybindings.register(MODULE_ID, 'activate-highlighter-tool', {
+    name: "Activate highlighter tool",
+    hint: "After activating, click on any UI element to highlight it for everyone.  Requires 'Enable highlighting' setting to be enabled.",
+    editable: [{ key: 'KeyH' }],
+    onDown: toggleHighlightTool,
   })
 }
