@@ -16,11 +16,15 @@ let flipExtraHighlightTimeout = null
 let stopHighlightTimeout = null
 let resetOverlayTimeout = null
 
+let isHighlightToolActive = false
+
 export const initOverlay = () => {
   overlayElement = document.createElement('div')
   overlayElement.classList.add('rhui-overlay')
   document.body.appendChild(overlayElement)
 }
+
+export const toggleHighlightTool = () => isHighlightToolActive = !isHighlightToolActive
 
 const getFoundryTabOf = ($element) => {
   return $element?.parents().filter((i, e) => e.matches('.tab.sidebar-tab'))[0]?.dataset.tab
@@ -232,6 +236,21 @@ export const onRenderPlayerList = () => {
   }
 }
 
+Hooks.on('getSceneControlButtons', controls => {
+  if (!game.settings.get(MODULE_ID, 'enable-highlighting-for-others')) return
+
+  const tokenToolbar = controls.find(c => c.name === 'token').tools
+  tokenToolbar.splice(tokenToolbar.length - 1, 0, {
+    name: 'RemoteHighlight',
+    title: 'Remote Highlight',
+    icon: 'fas fa-highlighter',
+    button: true,
+    toggle: true,
+    active: isHighlightToolActive,
+    onClick: toggleHighlightTool,
+  })
+})
+
 /**
  * message should have a 'selector' field, and a potential 'playerId' field
  */
@@ -268,15 +287,9 @@ const debounceEmitHighlight = (elem) => {
 }
 
 /**
- * On aux clicking an element while holding Control (but not right-clicking):
- *
  * Emit remote-highlight-UI message, and also do it locally, and also refresh listeners for the future
  */
-const onAuxClick = (event) => {
-  if (event.button === 2 && !game.settings.get(MODULE_ID, 'allow-when-right-clicking')) return
-  const heldModifiers = KeyboardManager.getKeyboardEventContext(event).modifiers
-  if (!areKeybindingModifierKeysFitting(heldModifiers)) return
-
+const onSuccessfulHighlightClick = (event) => {
   // ohmygosh this line makes things so much easier
   // the element under the cursor is found based on the cursor's screen position
   // - if no element, return.
@@ -289,9 +302,32 @@ const onAuxClick = (event) => {
   debounceEmitHighlight(elem)
 }
 
+const onAuxClick = (event) => {
+  if (event.button === 2 && !game.settings.get(MODULE_ID, 'allow-when-right-clicking')) return
+  const heldModifiers = KeyboardManager.getKeyboardEventContext(event).modifiers
+  if (!areKeybindingModifierKeysFitting(heldModifiers)) return
+
+  onSuccessfulHighlightClick(event)
+}
+
+const onClick = (event) => {
+  // 0 = left click
+  if (event.button !== 0) return
+  if (!isHighlightToolActive) return
+
+  toggleHighlightTool()
+  const highlightTool = ui.controls.controls.find(c => c.name === 'token').tools.find(t => t.name === 'RemoteHighlight')
+  highlightTool.active = false
+  ui.controls.render()
+
+  onSuccessfulHighlightClick(event)
+}
+
 export const addRemoteHighlightListener = () => {
   document.body.addEventListener('auxclick', onAuxClick)
+  document.body.addEventListener('click', onClick, { capture: true })
 }
 export const removeRemoteHighlightListener = () => {
   document.body.removeEventListener('auxclick', onAuxClick)
+  document.body.removeEventListener('click', onClick, { capture: true })
 }
