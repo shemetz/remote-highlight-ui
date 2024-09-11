@@ -1,5 +1,5 @@
 .rhui-overlay {
-    box-shadow: rgba(33, 33, 33, 0.0) 0 0 1px 2px, rgba(33, 33, 33, 0.0) 0 0 0 5000px;
+    box-shadow: rgba(33, 33, 33, 0.0) 0 0 1px 2px, rgba(33, 33, 33, 0.0) 0 0 0 9999px;
     border-radius: 4px;
     transition: all 0.3s ease-out;
     z-index: 9997;
@@ -10,10 +10,19 @@
     pointer-events: none
 }
 
+.rhui-preview {
+    border-radius: 4px;
+    transition: all 0s;
+    z-index: 9997;
+    position: fixed;
+    outline-style: dashed;
+    outline-color: rgb(255, 0, 0);
+}
+
 /*highlighting the "hole" element by adding a dashed outline and darkening most things around it*/
 .rhui-highlight-hole-active {
-    box-shadow: rgba(33, 33, 33, 0.8) 0 0 1px 2px, rgba(33, 33, 33, 0.6) 0 0 0 5000px;
-    outline-color: red;
+    box-shadow: rgba(33, 33, 33, 0.8) 0 0 1px 2px, rgba(33, 33, 33, 0.6) 0 0 0 9999px;
+    outline-color: rgba(255, 0, 0);
 }
 
 /*temporarily thicker highlight, for a primitive animation*/
@@ -29,11 +38,11 @@
 }
 
 .rhui-highlight-hole-stop {
-    box-shadow: rgba(33, 33, 33, 0.5) 0 0 1px 2px, rgba(33, 33, 33, 0.1) 0 0 0 5000px;
+    box-shadow: rgba(33, 33, 33, 0.5) 0 0 1px 2px, rgba(33, 33, 33, 0.1) 0 0 0 9999px;
 }
 
 /*used to mark a user in the player list as currently singled out for highlighting*/
 .rhui-only-highlight-for-this-user {
-    outline-color: red;
+    outline-color: rgba(255, 0, 0);
     outline-style: auto;
 }

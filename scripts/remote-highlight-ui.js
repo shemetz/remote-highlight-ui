@@ -8,9 +8,10 @@ import {
   MODULE_ID,
 } from './settings.js'
 
-let overlayElement // after init, will always be defined
+let redBoxHighlightOverlayElement // after init, will always be defined
 let userIdToOnlyHighlightFor = null
 let $currHighlitElement = null
+let orangeBoxPreviewOverlayElement = null // after init, will always be defined
 
 let flipExtraHighlightTimeout = null
 let stopHighlightTimeout = null
@@ -19,12 +20,23 @@ let resetOverlayTimeout = null
 let isHighlightToolActive = false
 
 export const initOverlay = () => {
-  overlayElement = document.createElement('div')
-  overlayElement.classList.add('rhui-overlay')
-  document.body.appendChild(overlayElement)
+  redBoxHighlightOverlayElement = document.createElement('div')
+  redBoxHighlightOverlayElement.classList.add('rhui-overlay')
+  document.body.appendChild(redBoxHighlightOverlayElement)
+
+  orangeBoxPreviewOverlayElement = document.createElement('div')
+  orangeBoxPreviewOverlayElement.classList.add('rhui-overlay')
+  document.body.appendChild(orangeBoxPreviewOverlayElement)
 }
 
-export const toggleHighlightTool = () => isHighlightToolActive = !isHighlightToolActive
+export const toggleHighlightTool = () => {
+  isHighlightToolActive = !isHighlightToolActive
+  if (isHighlightToolActive) {
+    orangeBoxPreviewOverlayElement.classList.add('rhui-preview')
+  } else {
+    orangeBoxPreviewOverlayElement.classList.remove('rhui-preview')
+  }
+}
 
 const getFoundryTabOf = ($element) => {
   return $element?.parents().filter((i, e) => e.matches('.tab.sidebar-tab'))[0]?.dataset.tab
@@ -40,8 +52,8 @@ const addHighlight = ($element) => {
     stopHighlight(true)
   }
   $currHighlitElement = $element
-  $(overlayElement).removeClass('rhui-highlight-hole-failed')
-  $(overlayElement).removeClass('rhui-highlight-hole-extra')
+  $(redBoxHighlightOverlayElement).removeClass('rhui-highlight-hole-failed')
+  $(redBoxHighlightOverlayElement).removeClass('rhui-highlight-hole-extra')
 
   // switch to that tab if needed
   // foundry tab
@@ -117,7 +129,7 @@ const getScrollParent = (node) => {
   return document.scrollingElement || document.documentElement
 }
 
-const centerHighlightOnElement = (targetElement) => {
+const centerHighlightOnElement = (overlayElement, targetElement) => {
   const targetBoundingRect = targetElement.getBoundingClientRect()
   overlayElement.style.width = `${targetBoundingRect.width + HIGHLIGHT_PADDING}px`
   overlayElement.style.height = `${targetBoundingRect.height + HIGHLIGHT_PADDING}px`
@@ -127,13 +139,14 @@ const centerHighlightOnElement = (targetElement) => {
 
 const startHighlight = () => {
   // Fade out rest of screen, except rectangle around target element
-  centerHighlightOnElement($currHighlitElement[0])
-  overlayElement.classList.add('rhui-highlight-hole-active')
+  centerHighlightOnElement(redBoxHighlightOverlayElement, $currHighlitElement[0])
+  redBoxHighlightOverlayElement.classList.add('rhui-highlight-hole-active')
+  orangeBoxPreviewOverlayElement.classList.remove('rhui-preview')
 
   // basic animation
   const flipExtraHighlight = () => {
     if (!$currHighlitElement) return
-    $(overlayElement).toggleClass('rhui-highlight-hole-extra')
+    $(redBoxHighlightOverlayElement).toggleClass('rhui-highlight-hole-extra')
     clearTimeout(flipExtraHighlightTimeout)
     flipExtraHighlightTimeout = setTimeout(flipExtraHighlight, HIGHLIGHT_DURATION / EXTRA_HIGHLIGHT_FREQUENCY)
   }
@@ -143,12 +156,12 @@ const startHighlight = () => {
 export const stopHighlight = (addingAnother) => {
   clearTimeout(flipExtraHighlightTimeout)
   $currHighlitElement = null
-  if (overlayElement && !addingAnother) {
-    $(overlayElement).removeClass('rhui-highlight-hole-active')
-    $(overlayElement).removeClass('rhui-highlight-hole-failed')
-    $(overlayElement).removeClass('rhui-highlight-hole-extra')
+  if (redBoxHighlightOverlayElement && !addingAnother) {
+    $(redBoxHighlightOverlayElement).removeClass('rhui-highlight-hole-active')
+    $(redBoxHighlightOverlayElement).removeClass('rhui-highlight-hole-failed')
+    $(redBoxHighlightOverlayElement).removeClass('rhui-highlight-hole-extra')
     resetOverlayTimeout = setTimeout(() => {
-      centerHighlightOnElement(document.body)
+      centerHighlightOnElement(redBoxHighlightOverlayElement, document.body)
     }, TRANSITION_DURATION + 50)
   }
 }
@@ -181,10 +194,10 @@ export const onSocketMessageHighlightSomething = (message) => {
 
 export const onSocketMessageFailedHighlight = () => {
   if ($currHighlitElement) {
-    $(overlayElement).removeClass('rhui-highlight-hole-extra')
+    $(redBoxHighlightOverlayElement).removeClass('rhui-highlight-hole-extra')
     clearTimeout(flipExtraHighlightTimeout)
     clearTimeout(stopHighlightTimeout)
-    $(overlayElement).addClass('rhui-highlight-hole-failed')
+    $(redBoxHighlightOverlayElement).addClass('rhui-highlight-hole-failed')
     stopHighlightTimeout = setTimeout(() => {
       stopHighlight(false)
     }, FAILED_HIGHLIGHT_DURATION)
@@ -323,9 +336,21 @@ const onClick = (event) => {
   onSuccessfulHighlightClick(event)
 }
 
+/** Draw highlighter preview over hovered element */
+const onMouseMove = (event) => {
+  if (!isHighlightToolActive) return
+
+  const elem = document.elementFromPoint(event.x, event.y)
+  if (elem === null || elem === undefined) return
+
+  // note that stopPropagation doesn't seem to help here, not even if I capture
+  centerHighlightOnElement(orangeBoxPreviewOverlayElement, elem)
+}
+
 export const addRemoteHighlightListener = () => {
   document.body.addEventListener('auxclick', onAuxClick)
   document.body.addEventListener('click', onClick, { capture: true })
+  document.body.addEventListener('mousemove', onMouseMove)
 }
 export const removeRemoteHighlightListener = () => {
   document.body.removeEventListener('auxclick', onAuxClick)
