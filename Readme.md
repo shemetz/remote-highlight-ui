@@ -16,8 +16,13 @@ To install, browse for it in the module browser, or [directly copy the manifest 
 Useful for teaching people the UI remotely, or bringing attention to things (e.g. the end turn button).
 Serves a similar purpose to pings on the canvas, but for the UI.
 
-To activate, Ctrl+Aux-Click on a UI element.  The element will be highlighted on all other players' screens.
-"Aux-Click" is middle-click or a mouse's side button mapped to "Forward".
+To use, first enable highlights in the settings and then do one of the following:
+- Click the highlighter tool button on the left side of the screen, then click on a UI element
+- Ctrl+Aux-Click on a UI element
+    - "Aux-Click" is middle-click or a mouse's side button mapped to "Forward".
+- Use an optional keybinding
+ 
+The element will be highlighted on all other players' screens (configurable).
 
 You can configure it in the setting to have it trigger with a Ctrl+Right-click or with Shift or Ctrl+Shift, too.
 
@@ -44,9 +49,8 @@ highlight will turn red and stop early, to signal a failure.
 ## Implementation details for nerds
 
 The module adds an `auxclick` event listener to `document.body`. When it is triggered and Ctrl is held, the code will
-identify the element under the cursor, and then
-the game will send a socket message to all other users with a JS selector string that uniquely identifies the
-element.  Then, all users will have that element highlighted.  It will
+identify the element under the cursor, and then the game will send a socket message to all other users with a
+JS selector string that uniquely identifies the element.  Then, all users will have that element highlighted.  It will
 also scroll to put the element in view if needed (centering it vertically).
 
 The unique selector is generated in [generate_unique_selector.js`](scripts/generate-unique-selector.js) which does 
@@ -66,4 +70,4 @@ Luckily, this is no longer the case!
 
 ![remote highlights demo 2](metadata/demo_2.gif)
 
-(The above gif is slightly outdated - nowadays if an element isn't found for the player, the GM will see a red square to be notified)
+(The above gifs are slightly outdated - nowadays if an element isn't found for the player, the GM will see a red square to be notified)
