@@ -1,5 +1,5 @@
 import { enableHighlighting } from './hooks.js'
-import { toggleHighlightTool } from './remote-highlight-ui.js'
+import { toggleHighlightTool, instantHighlight } from './remote-highlight-ui.js'
 
 export const MODULE_ID = 'remote-highlight-ui'
 export const SECOND = 1000
@@ -48,10 +48,17 @@ export const registerSettings = () => {
     type: Boolean,
     default: false,
   })
+
   game.keybindings.register(MODULE_ID, 'activate-highlighter-tool', {
     name: "Activate highlighter tool",
     hint: "After activating, click on any UI element to highlight it for everyone.  Requires 'Enable highlighting' setting to be enabled.",
-    editable: [{ key: 'KeyH' }],
+    editable: [],
     onDown: toggleHighlightTool,
+  })
+  game.keybindings.register(MODULE_ID, 'instant-highlight-keybind', {
+    name: "Instant highlight keybind",
+    hint: "Press this and the UI element under your cursor will be highlighted for everyone.  Requires 'Enable highlighting' setting to be enabled.",
+    editable: [],
+    onDown: instantHighlight,
   })
 }

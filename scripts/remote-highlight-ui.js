@@ -332,6 +332,15 @@ const onMouseMove = (event) => {
   centerHighlightOnElement(orangeBoxPreviewOverlayElement, elem)
 }
 
+export const instantHighlight = (keybindEvent) => {
+  // event doesn't have coords, we'll get them with a workaround
+  const { x, y } = canvas.app.stage.toGlobal(canvas.mousePosition)
+  const event = keybindEvent.event
+  event.x = x
+  event.y = y
+  onSuccessfulHighlightClick(event)
+}
+
 export const addRemoteHighlightListener = () => {
   document.body.addEventListener('auxclick', onAuxClick)
   document.body.addEventListener('click', onClick, { capture: true })

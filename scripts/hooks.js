@@ -23,12 +23,19 @@ Hooks.on('renderPlayerList', () => {
 })
 
 Hooks.on('getSceneControlButtons', controls => {
-  const keybinding = game.keybindings.bindings.get('remote-highlight-ui.activate-highlighter-tool')[0].key
-  const keybindShort = keybinding.replace("Key", "")
+  const keybinding = game.keybindings.bindings.get('remote-highlight-ui.activate-highlighter-tool')[0]?.key
+  const instantKeybinding = game.keybindings.bindings.get('remote-highlight-ui.instant-highlight-keybind')[0]?.key
+  const keybindParentheses1 = keybinding ? keybinding.replace('Key', '') : null
+  const keybindParentheses2 = instantKeybinding ? instantKeybinding.replace('Key', '') : null
+  const titleSuffix = (keybindParentheses1 && keybindParentheses2)
+    ? ` (${keybindParentheses1} / ${keybindParentheses2})`
+    : (keybindParentheses1 || keybindParentheses2)
+      ? ` (${keybindParentheses1 || keybindParentheses2})`
+      : ''
   const tokenToolbar = controls.find(c => c.name === 'token').tools
   tokenToolbar.splice(tokenToolbar.length - 1, 0, {
     name: 'RemoteHighlight',
-    title: `Remote Highlight (${keybindShort})`,
+    title: `Remote Highlight${titleSuffix}`,
     icon: 'fas fa-highlighter',
     button: true,
     toggle: true,
@@ -54,7 +61,7 @@ export const enableHighlighting = (enabled) => {
     didLibWrapperRegister = false
   }
 
-  ui.controls.controls.find(c => c.name === "token").tools.find(t => t.name === "RemoteHighlight").visible = enabled
+  ui.controls.controls.find(c => c.name === 'token').tools.find(t => t.name === 'RemoteHighlight').visible = enabled
   ui.controls.render()
 }
 
