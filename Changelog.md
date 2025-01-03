@@ -1,3 +1,6 @@
+## 2.2.1 - 2025-01-03
+- Improved github workflow automation
+
 ## 2.2.0 - 2024-09-11
 - Added side controls tool button
 - Added two keybindings
