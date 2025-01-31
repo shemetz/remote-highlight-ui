@@ -1,0 +1,37 @@
+{
+  "remote-highlight-ui": {
+    "tokenToolbar.title": "リモートハイライト",
+    "settings": {
+      "enable-highlighting-for-others": {
+        "name": "他プレイヤーへのハイライトを有効化",
+        "hint": "コントロールキーを押しながらUI要素を中クリック/右クリック/補助クリックすると、ほかのプレイヤーにもハイライト表示されます。"
+      },
+      "enable-receiving-highlights": {
+        "name": "他プレーヤーから受信したハイライトを有効化",
+        "hint": "無効にすると、ほかのプレイヤーはあなたにハイライトを送信できなくなります。"
+      },
+      "keybinding-modifiers": {
+        "name": "修飾キー",
+        "hint": "中クリックでハイライトをトリガーさせるための修飾キーを選択してください（デフォルト：Control）。",
+        "choices": {
+          "control": "Control",
+          "control+shift": "Control + Shift",
+          "shift": "Shift"
+        }
+      },
+      "allow-when-right-clicking": {
+        "name": "右クリックも許可",
+        "hint": "修飾キー＋右クリックでもトリガーしますか？ (デフォルト：無効)"
+      },
+      "activate-highlighter-tool": {
+        "name": "ハイライトツール起動",
+        "hint": "起動後、任意のUI要素をクリックすると、その要素が全員に対してハイライト表示されます。「他プレイヤーへのハイライトを有効化」設定を有効にする必要があります。"
+      },
+      "instant-highlight-keybind": {
+        "name": "即時ハイライト",
+        "hint": "このキーを入力すると、カーソル下のUI要素が全員に対してハイライト表示されます。「他プレイヤーへのハイライトを有効化」設定を有効にする必要があります。"
+      }
+    }
+  }
+}
+
