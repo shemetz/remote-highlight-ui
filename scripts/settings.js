@@ -11,8 +11,8 @@ export const HIGHLIGHT_PADDING = 10
 
 export const registerSettings = () => {
   game.settings.register(MODULE_ID, 'enable-highlighting-for-others', {
-    name: `Enable highlighting elements for other players`,
-    hint: `When holding Control and middle-clicking / right-clicking / aux-clicking on a UI element, it will be highlighted for every other player.`,
+    name: `${MODULE_ID}.settings.enable-highlighting-for-others.name`,
+    hint: `${MODULE_ID}.settings.enable-highlighting-for-others.hint`,
     scope: 'client',
     config: true,
     type: Boolean,
@@ -20,29 +20,29 @@ export const registerSettings = () => {
     onChange: enableHighlighting
   })
   game.settings.register(MODULE_ID, 'enable-receiving-highlights', {
-    name: `Enable receiving highlights from other players`,
-    hint: `If you disable this, others won't be able to send highlights to you.`,
+    name: `${MODULE_ID}.settings.enable-receiving-highlights.name`,
+    hint: `${MODULE_ID}.settings.enable-receiving-highlights.hint`,
     scope: 'client',
     config: true,
     type: Boolean,
     default: true
   })
   game.settings.register(MODULE_ID, 'keybinding-modifiers', {
-    name: `Modifier keys`,
-    hint: `Choose modifier keys required for the highlight to trigger on a middle-click (default: Control).`,
+    name: `${MODULE_ID}.settings.keybinding-modifiers.name`,
+    hint: `${MODULE_ID}.settings.keybinding-modifiers.hint`,
     scope: 'client',
     config: true,
     type: String,
     default: '["Control"]',
     choices: {
-      '["Control"]': 'Control',
-      '["Control","Shift"]': 'Control + Shift',
-      '["Shift"]': 'Shift',
+      '["Control"]': `${MODULE_ID}.settings.keybinding-modifiers.choices.control`,
+      '["Control","Shift"]': `${MODULE_ID}.settings.keybinding-modifiers.choices.control+shift`,
+      '["Shift"]': `${MODULE_ID}.settings.keybinding-modifiers.choices.shift`,
     },
   })
   game.settings.register(MODULE_ID, 'allow-when-right-clicking', {
-    name: `Allow when right-clicking`,
-    hint: `Should this also trigger on e.g. Ctrl+Right-click?  (default false)`,
+    name: `${MODULE_ID}.settings.allow-when-right-clicking.name`,
+    hint: `${MODULE_ID}.settings.allow-when-right-clicking.hint`,
     scope: 'client',
     config: true,
     type: Boolean,
@@ -50,14 +50,14 @@ export const registerSettings = () => {
   })
 
   game.keybindings.register(MODULE_ID, 'activate-highlighter-tool', {
-    name: "Activate highlighter tool",
-    hint: "After activating, click on any UI element to highlight it for everyone.  Requires 'Enable highlighting' setting to be enabled.",
+    name: `${MODULE_ID}.settings.activate-highlighter-tool.name`,
+    hint: `${MODULE_ID}.settings.activate-highlighter-tool.hint`,
     editable: [],
     onDown: toggleHighlightTool,
   })
   game.keybindings.register(MODULE_ID, 'instant-highlight-keybind', {
-    name: "Instant highlight keybind",
-    hint: "Press this and the UI element under your cursor will be highlighted for everyone.  Requires 'Enable highlighting' setting to be enabled.",
+    name: `${MODULE_ID}.settings.instant-highlight-keybind.name`,
+    hint: `${MODULE_ID}.settings.instant-highlight-keybind.hint`,
     editable: [],
     onDown: instantHighlight,
   })
