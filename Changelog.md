@@ -1,3 +1,6 @@
+## 2.2.2 - 2025-02-01
+- Added Japanese localization
+
 ## 2.2.1 - 2025-01-03
 - Improved github workflow automation
 

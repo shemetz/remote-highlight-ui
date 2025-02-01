@@ -2,7 +2,7 @@
   "id": "remote-highlight-ui",
   "title": "Remote Highlight UI",
   "description": "Allows users to highlight UI elements on others' screens.",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "compatibility": {
     "minimum": "11",
     "verified": "12"
