@@ -44,6 +44,18 @@
       "reddit": "u/Shemetz"
     }
   ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    },
+    {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "languages/ja.json"
+    }
+  ],
   "media": [
     {
       "type": "screenshot",

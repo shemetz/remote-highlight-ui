@@ -35,7 +35,7 @@ Hooks.on('getSceneControlButtons', controls => {
   const tokenToolbar = controls.find(c => c.name === 'token').tools
   tokenToolbar.splice(tokenToolbar.length - 1, 0, {
     name: 'RemoteHighlight',
-    title: `Remote Highlight${titleSuffix}`,
+    title: game.i18n.localize(`${MODULE_ID}.tokenToolbar.title`) + `${titleSuffix}`,
     icon: 'fas fa-highlighter',
     button: true,
     toggle: true,
