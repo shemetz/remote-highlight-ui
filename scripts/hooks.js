@@ -10,7 +10,6 @@ import { MODULE_ID, registerSettings } from './settings.js'
 
 Hooks.on('init', () => {
   registerSettings()
-  registerConstantLibWrapperWraps()
   initOverlay()
 })
 
@@ -20,6 +19,9 @@ Hooks.on('ready', () => {
 
 Hooks.on('renderPlayerList', () => {
   onRenderPlayerList()
+})
+Hooks.on('getUserContextOptions', (_players, contextOptions) => {
+  contextOptions.push(...additionalPlayerListContextOptions())
 })
 
 Hooks.on('getSceneControlButtons', controls => {
@@ -32,17 +34,16 @@ Hooks.on('getSceneControlButtons', controls => {
     : (keybindParentheses1 || keybindParentheses2)
       ? ` (${keybindParentheses1 || keybindParentheses2})`
       : ''
-  const tokenToolbar = controls.find(c => c.name === 'token').tools
-  tokenToolbar.splice(tokenToolbar.length - 1, 0, {
-    name: 'RemoteHighlight',
+  const tokenToolbar = controls.tokens.tools
+  tokenToolbar.remoteHighlight = {
+    name: 'remoteHighlight',
     title: game.i18n.localize(`${MODULE_ID}.tokenToolbar.title`) + `${titleSuffix}`,
     icon: 'fas fa-highlighter',
-    button: true,
     toggle: true,
     visible: game.settings.get(MODULE_ID, 'enable-highlighting-for-others'),
     active: false,
-    onClick: toggleHighlightTool,
-  })
+    onChange: toggleHighlightTool,
+  }
 })
 
 let didLibWrapperRegister = false
@@ -61,12 +62,6 @@ export const enableHighlighting = (enabled) => {
     didLibWrapperRegister = false
   }
 
-  ui.controls.controls.find(c => c.name === 'token').tools.find(t => t.name === 'RemoteHighlight').visible = enabled
+  ui.controls.controls.tokens.tools.remoteHighlight.visible = enabled
   ui.controls.render()
-}
-
-const registerConstantLibWrapperWraps = () => {
-  libWrapper.register(MODULE_ID, 'PlayerList.prototype._getUserContextOptions', (wrapped, ...args) => {
-    return wrapped(...args).concat(additionalPlayerListContextOptions())
-  }, 'WRAPPER')
 }

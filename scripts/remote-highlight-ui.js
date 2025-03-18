@@ -36,8 +36,8 @@ export const toggleHighlightTool = () => {
   } else {
     orangeBoxPreviewOverlayElement.classList.remove('rhui-preview')
   }
-  const highlightTool = ui.controls.controls.find(c => c.name === 'token').tools.find(t => t.name === 'RemoteHighlight')
-  highlightTool.active = isHighlightToolActive
+
+  ui.controls.controls.tokens.tools.remoteHighlight.active = isHighlightToolActive
   ui.controls.render()
 }
 
@@ -219,22 +219,26 @@ export const additionalPlayerListContextOptions = () => {
       name: 'Highlight UI only for this user',
       icon: '<i class="fas fa-bullseye"></i>',
       condition: li => {
-        const thatUserId = li[0].dataset.userId
+        const thatUserId = li.dataset.userId
+        console.log('Remote Highlight UI', game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
+          && userIdToOnlyHighlightFor !== thatUserId
+          && thatUserId !== game.user.id,
+        )
         return game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
           && userIdToOnlyHighlightFor !== thatUserId
           && thatUserId !== game.user.id
       },
       callback: li => {
-        userIdToOnlyHighlightFor = li[0].dataset.userId
+        userIdToOnlyHighlightFor = li.dataset.userId
         onRenderPlayerList()
       },
     },
     {
-      name: 'Stop highlighting only for this user',
+      name: 'Stop only highlighting for this user',
       icon: '<i class="fas fa-ban"></i>',
       condition: li => {
         return game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
-          && userIdToOnlyHighlightFor === li[0].dataset.userId
+          && userIdToOnlyHighlightFor === li.dataset.userId
       },
       callback: () => {
         userIdToOnlyHighlightFor = null
