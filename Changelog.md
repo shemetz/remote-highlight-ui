@@ -1,3 +1,6 @@
+## 2.3.0 - 2025-03-20
+- V13 compatibility (newer versions will no longer compatible with V12 or earlier!)
+
 ## 2.2.2 - 2025-02-01
 - Added Japanese localization (#10)
 
