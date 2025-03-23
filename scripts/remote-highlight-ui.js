@@ -309,7 +309,7 @@ const onSuccessfulHighlightClick = (event) => {
 
 const onAuxClick = (event) => {
   if (event.button === 2 && !game.settings.get(MODULE_ID, 'allow-when-right-clicking')) return
-  const heldModifiers = KeyboardManager.getKeyboardEventContext(event).modifiers
+  const heldModifiers = foundry.helpers.interaction.KeyboardManager.getKeyboardEventContext(event).modifiers
   if (!areKeybindingModifierKeysFitting(heldModifiers)) return
 
   onSuccessfulHighlightClick(event)
