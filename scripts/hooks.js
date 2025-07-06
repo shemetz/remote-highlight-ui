@@ -25,6 +25,16 @@ Hooks.on('getUserContextOptions', (_players, contextOptions) => {
 })
 
 Hooks.on('getSceneControlButtons', controls => {
+  const permissionLevel = game.settings.get(MODULE_ID, 'permission-level');
+  const canSeeButton = () => {
+  	const user = game.user;
+  	switch (permissionLevel) {
+  		case 'gm': return user.isGM;
+  		case 'trusted': return user.isTrusted;
+  		case 'player': return true;
+  		default: return false;
+  	}
+  };
   const keybinding = game.keybindings.bindings.get('remote-highlight-ui.activate-highlighter-tool')[0]?.key
   const instantKeybinding = game.keybindings.bindings.get('remote-highlight-ui.instant-highlight-keybind')[0]?.key
   const keybindParentheses1 = keybinding ? keybinding.replace('Key', '') : null
@@ -40,7 +50,7 @@ Hooks.on('getSceneControlButtons', controls => {
     title: game.i18n.localize(`${MODULE_ID}.tokenToolbar.title`) + `${titleSuffix}`,
     icon: 'fas fa-highlighter',
     toggle: true,
-    visible: game.settings.get(MODULE_ID, 'enable-highlighting-for-others'),
+    visible: canSeeButton() && game.settings.get(MODULE_ID, 'enable-highlighting-for-others'),
     active: false,
     onChange: toggleHighlightTool,
   }
