@@ -30,17 +30,16 @@
       "instant-highlight-keybind": {
         "name": "Instant highlight keybind",
         "hint": "Press this and the UI element under your cursor will be highlighted for everyone.  Requires 'Enable highlighting' setting to be enabled."
-      }
-      ,
+      },
       "permission-level": {
         "name": "Minimum level to access tool",
-        "hint": "Choose which level user will see tool icon."
-         "choices": {
+        "hint": "Choose which level user will see tool icon.",
+        "choices": {
           "gm": "GM",
           "trusted": "Trusted Player",
           "player": "Player"
+        }
       }
     }
   }
 }
-
