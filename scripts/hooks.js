@@ -47,13 +47,6 @@ Hooks.on('getSceneControlButtons', controls => {
 };
   
   const visible = canSeeButton() && game.settings.get(MODULE_ID, 'enable-highlighting-for-others');
-  
-  // 🐞 DEBUG LOGGING GOES HERE:
-  console.log(`[${MODULE_ID}] permissionLevel: ${permissionLevel}`);
-  console.log(`[${MODULE_ID}] isGM: ${game.user.isGM}, isTrusted: ${game.user.isTrusted}`);
-  console.log(`[${MODULE_ID}] enable-highlighting-for-others: ${game.settings.get(MODULE_ID, 'enable-highlighting-for-others')}`);
-  console.log(`[${MODULE_ID}] canSeeButton(): ${canSeeButton()}, final visible: ${visible}`);
-  
   if (!visible) return;
   
   tokenControls.tools.push({
@@ -90,7 +83,7 @@ export const enableHighlighting = (enabled) => {
   	didLibWrapperRegister = false;
   }
   
-  // ✅ SAFELY update tool visibility
+  // update tool visibility
   const tokenControls = ui.controls?.controls?.find(c => c.name === 'token');
   const highlightTool = tokenControls?.tools?.find(t => t.name === 'RemoteHighlight');
   if (highlightTool) {
