@@ -49,6 +49,20 @@ export const registerSettings = () => {
     default: false,
   })
 
+  game.settings.register(MODULE_ID, 'permission-level', {
+    name: `${MODULE_ID}.settings.permission-level.name`,
+    hint: `${MODULE_ID}.settings.permission-level.hint`,
+    scope: 'client',
+    config: true,
+    type: String,
+    default: gm,
+    choices: {
+      '["GM"]': `${MODULE_ID}.settings.permission-level.choices.gm`,
+      '["Trusted Player"]': `${MODULE_ID}.settings.permission-level.choices.trusted`,
+      '["Player"]': `${MODULE_ID}.settings.permission-level.choices.player`,
+    },
+  })
+
   game.keybindings.register(MODULE_ID, 'activate-highlighter-tool', {
     name: `${MODULE_ID}.settings.activate-highlighter-tool.name`,
     hint: `${MODULE_ID}.settings.activate-highlighter-tool.hint`,
