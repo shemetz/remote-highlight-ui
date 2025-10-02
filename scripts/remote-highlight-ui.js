@@ -220,10 +220,6 @@ export const additionalPlayerListContextOptions = () => {
       icon: '<i class="fas fa-bullseye"></i>',
       condition: li => {
         const thatUserId = li.dataset.userId
-        console.log('Remote Highlight UI', game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
-          && userIdToOnlyHighlightFor !== thatUserId
-          && thatUserId !== game.user.id,
-        )
         return game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
           && userIdToOnlyHighlightFor !== thatUserId
           && thatUserId !== game.user.id

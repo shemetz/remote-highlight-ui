@@ -8,6 +8,18 @@ import {
 } from './remote-highlight-ui.js'
 import { MODULE_ID, registerSettings } from './settings.js'
 
+const canSeeButton = () => {
+  const user = game.user;
+  const permissionLevel = game.settings.get(MODULE_ID, 'permission-level');
+
+  switch (permissionLevel) {
+    case 'gm': return user.isGM;
+    case 'trusted': return user.isTrusted || user.isGM;
+    case 'player': return true;
+    default: return true;
+  }
+};
+
 Hooks.on('init', () => {
   registerSettings()
   initOverlay()
@@ -25,37 +37,19 @@ Hooks.on('getUserContextOptions', (_players, contextOptions) => {
 })
 
 Hooks.on('getSceneControlButtons', controls => {
-     
-  const tokenControls = controls.tokens;
-  console.log(`[${MODULE_ID}] controls.tokens:`, tokenControls);
-     
-  if (!tokenControls?.tools) {
+  if (!controls.tokens?.tools) {
     console.warn(`[${MODULE_ID}] Token controls not found or malformed`);
     return;
   }
-     
-  const permissionLevel = game.settings.get(MODULE_ID, 'permission-level');
   const enableHighlighting = game.settings.get(MODULE_ID, 'enable-highlighting-for-others');
-     
-  const canSeeButton = () => {
-  	const user = game.user;
-  	switch (permissionLevel) {
-  	  case 'gm': return user.isGM;
-  	  case 'trusted': return user.isTrusted || user.isGM;
-  	  case 'player': return true;
-  	  default: return false;
-  	}
-  };
-     
   const visible = enableHighlighting && canSeeButton();
-     
   const keybinding = game.keybindings.bindings.get(`${MODULE_ID}.activate-highlighter-tool`)?.[0]?.key;
   const instantKeybinding = game.keybindings.bindings.get(`${MODULE_ID}.instant-highlight-keybind`)?.[0]?.key;
   const key1 = keybinding?.replace('Key', '') ?? null;
   const key2 = instantKeybinding?.replace('Key', '') ?? null;
   const titleSuffix = (key1 && key2) ? ` (${key1} / ${key2})` : (key1 || key2) ? ` (${key1 || key2})` : '';
-     
-  tokenControls.tools.remoteHighlight = {
+
+  controls.tokens.tools.remoteHighlight = {
     name: 'remoteHighlight',
     title: game.i18n.localize(`${MODULE_ID}.tokenToolbar.title`) + titleSuffix,
     icon: 'fas fa-highlighter',
@@ -64,7 +58,7 @@ Hooks.on('getSceneControlButtons', controls => {
     active: false,
     onChange: toggleHighlightTool
   };
-     
+
   console.log(`[${MODULE_ID}] Added remoteHighlight button | visible: ${visible}`);
 });
 
@@ -72,7 +66,7 @@ let didLibWrapperRegister = false
 export const enableHighlighting = (enabled) => {
   if (enabled) addRemoteHighlightListener();
   else removeRemoteHighlightListener();
-     
+
   if (enabled && !didLibWrapperRegister) {
   	libWrapper.register(
   	  MODULE_ID,
@@ -88,23 +82,9 @@ export const enableHighlighting = (enabled) => {
     libWrapper.unregister(MODULE_ID, 'FormApplication.prototype._render');
     didLibWrapperRegister = false;
   }
-     
-  // Safe visibility toggle for Foundry V13
-  const tokenControls = ui.controls?.controls?.token;
-  const highlightTool = tokenControls?.tools?.find(t => t.name === 'RemoteHighlight');
-     
+
+  const highlightTool = ui.controls?.controls?.tokens?.tools.remoteHighlight
   if (highlightTool) {
-  	const permissionLevel = game.settings.get(MODULE_ID, 'permission-level');
-  	const canSeeButton = () => {
-  	  const user = game.user;
-  	  switch (permissionLevel) {
-  	    case 'gm': return user.isGM;
-  	    case 'trusted': return user.isTrusted || user.isGM;
-  	    case 'player': return true;
-  	    default: return false;
-  	  }
-  	};
-     
   	highlightTool.visible = enabled && canSeeButton();
   	ui.controls.render();
   }
