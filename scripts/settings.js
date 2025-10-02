@@ -54,7 +54,7 @@ export const registerSettings = () => {
     scope: 'world',
     config: true,
     type: String,
-    default: 'gm',
+    default: 'trusted',
     choices: {
       gm: `${MODULE_ID}.settings.permission-level.choices.gm`,
       trusted: `${MODULE_ID}.settings.permission-level.choices.trusted`,
