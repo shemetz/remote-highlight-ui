@@ -1,0 +1,36 @@
+{
+  "remote-highlight-ui": {
+    "tokenToolbar.title": "Mise en évidence à distance",
+    "settings": {
+      "enable-highlighting-for-others": {
+        "name": "Activer la mise en évidence des éléments pour d'autres joueurs",
+        "hint": "Lorsque vous maintenez la touche Contrôle enfoncée et effectuez un clic central / un clic droit / un clic auxiliaire sur un élément de l'Interface Utilisateur, celui-ci sera mis en évidence pour chaque autre joueur."
+      },
+      "enable-receiving-highlights": {
+        "name": "Activer la réception de l'aide d'autres joueurs pour la mise en évidence",
+        "hint": "Si vous désactivez cette option, les autres ne pourront pas mettre en évidence chez vous les éléments de l'Interface."
+      },
+      "keybinding-modifiers": {
+        "name": "Touches de modification",
+        "hint": "Choisissez les touches de modification requises pour que la mise en évidence se déclenche lors d'un clic du milieu (par défaut : Contrôle).",
+        "choices": {
+          "control": "Contrôle",
+          "control+shift": "Contrôle + Maj",
+          "shift": "Maj"
+        }
+      },
+      "allow-when-right-clicking": {
+        "name": "Autoriser lors d'un clic droit",
+        "hint": "Cela devrait-il également se déclencher par exemple sur Ctrl+clic droit ? (non par défaut)"
+      },
+      "activate-highlighter-tool": {
+        "name": "Activer l'outil de mise en évidence",
+        "hint": "Après activation, cliquez sur n'importe quel élément de l'Interface Utilisateur pour le mettre en évidence. L'option « Activer la mise en évidence » doit être activée."
+      },
+      "instant-highlight-keybind": {
+        "name": "Raccourci clavier instantané",
+        "hint": "Appuyez ici pour mettre en évidence l'élément de l'Interface Utilisateur situé sous votre curseur. L'option « Activer la mise en évidence » doit être activée."
+      }
+    }
+  }
+}
