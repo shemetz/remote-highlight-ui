@@ -1,3 +1,7 @@
+## 2.3.1 - 2025-10-02
+- Added a setting to control which user types can highlight for others (default:  trusted players and GM) (#11)
+- Added French localization 
+
 ## 2.3.0 - 2025-03-20
 - V13 compatibility (newer versions will no longer compatible with V12 or earlier!)
 
