@@ -30,6 +30,15 @@
       "instant-highlight-keybind": {
         "name": "Raccourci clavier instantané",
         "hint": "Appuyez ici pour mettre en évidence l'élément de l'Interface Utilisateur situé sous votre curseur. L'option « Activer la mise en évidence » doit être activée."
+      },
+      "permission-level": {
+        "name": "Niveau minimum pour accéder à l'outil",
+        "hint": "Choisissez le niveau d’utilisateur qui verra le bouton de la barre d’outils.",
+        "choices": {
+          "gm": "MJ uniquement",
+          "trusted": "MJ et joueurs de confiance",
+          "player": "Tous les joueurs"
+        }
       }
     }
   }
