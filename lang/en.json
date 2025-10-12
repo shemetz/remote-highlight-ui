@@ -43,7 +43,10 @@
 	  	  "player": "All Players"
 	    }
 	  }
+    },
+    "playerList": {
+      "highlightOnlyForThisUser": "Highlight UI only for this user",
+      "stopOnlyHighlightingForThisUser": "Stop only highlighting for this user"
     }
   }
 }
-

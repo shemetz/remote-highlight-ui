@@ -216,7 +216,7 @@ const areKeybindingModifierKeysFitting = (modifiers) => {
 export const additionalPlayerListContextOptions = () => {
   return [
     {
-      name: 'Highlight UI only for this user',
+      name: game.i18n.localize(`${MODULE_ID}.playerList.highlightOnlyForThisUser`),
       icon: '<i class="fas fa-bullseye"></i>',
       condition: li => {
         const thatUserId = li.dataset.userId
@@ -230,7 +230,7 @@ export const additionalPlayerListContextOptions = () => {
       },
     },
     {
-      name: 'Stop only highlighting for this user',
+      name: game.i18n.localize(`${MODULE_ID}.playerList.stopOnlyHighlightingForThisUser`),
       icon: '<i class="fas fa-ban"></i>',
       condition: li => {
         return game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
