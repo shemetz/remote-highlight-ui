@@ -1,6 +1,9 @@
 {
   "remote-highlight-ui": {
-    "tokenToolbar.title": "Remote Highlight",
+    "tool": {
+      "heading": "Remote Highlight",
+      "paragraph": "Click on any UI element to highlight it for everyone.  You can also do this with a built-in shortcut (e.g. Ctrl+Midclick) and you can set a specific user as a highlight target via the users list."
+    },
     "settings": {
       "enable-highlighting-for-others": {
         "name": "Enable highlighting elements for other players",

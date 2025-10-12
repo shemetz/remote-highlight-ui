@@ -38,26 +38,38 @@ Hooks.on('getUserContextOptions', (_players, contextOptions) => {
 
 Hooks.on('getSceneControlButtons', controls => {
   if (!controls.tokens?.tools) {
-    console.warn(`[${MODULE_ID}] Token controls not found or malformed`);
-    return;
+    console.warn(`[${MODULE_ID}] Token controls not found or malformed`)
+    return
   }
-  const enableHighlighting = game.settings.get(MODULE_ID, 'enable-highlighting-for-others');
-  const visible = enableHighlighting && canSeeButton();
-  const keybinding = game.keybindings.bindings.get(`${MODULE_ID}.activate-highlighter-tool`)?.[0]?.key;
-  const instantKeybinding = game.keybindings.bindings.get(`${MODULE_ID}.instant-highlight-keybind`)?.[0]?.key;
-  const key1 = keybinding?.replace('Key', '') ?? null;
-  const key2 = instantKeybinding?.replace('Key', '') ?? null;
-  const titleSuffix = (key1 && key2) ? ` (${key1} / ${key2})` : (key1 || key2) ? ` (${key1 || key2})` : '';
+  const enableHighlighting = game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
+  const visible = enableHighlighting && canSeeButton()
+  const activateKeybind = game.keybindings.bindings.get(`${MODULE_ID}.activate-highlighter-tool`)?.[0]?.key?.replace('Key', '') ?? null
+  const instantKeybind = game.keybindings.bindings.get(`${MODULE_ID}.instant-highlight-keybind`)?.[0]?.key?.replace('Key', '') ?? null
 
   controls.tokens.tools.remoteHighlight = {
     name: 'remoteHighlight',
-    title: game.i18n.localize(`${MODULE_ID}.tokenToolbar.title`) + titleSuffix,
+    title: `${MODULE_ID}.tool.heading`,
     icon: 'fas fa-highlighter',
     toggle: true,
-    visible,
     active: false,
-    onChange: toggleHighlightTool
-  };
+    visible,
+    onChange: toggleHighlightTool,
+    toolclip: {
+      src: `modules/${MODULE_ID}/assets/rh-toolclip.webm`,
+      heading: `${MODULE_ID}.tool.heading`,
+      items: SceneControls.buildToolclipItems([
+        { paragraph: `${MODULE_ID}.tool.paragraph` },
+        activateKeybind ? {
+          heading: `${MODULE_ID}.settings.activate-highlighter-tool.name`,
+          reference: activateKeybind,
+        } : null,
+        instantKeybind ? {
+          heading: `${MODULE_ID}.settings.instant-highlighter-tool.name`,
+          reference: instantKeybind,
+        } : null,
+      ]),
+    },
+  }
 
   console.log(`[${MODULE_ID}] Added remoteHighlight button | visible: ${visible}`);
 });
