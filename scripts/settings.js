@@ -17,7 +17,7 @@ export const registerSettings = () => {
     config: true,
     type: Boolean,
     default: true,
-    onChange: enableHighlighting
+    onChange: enableHighlighting,
   })
   game.settings.register(MODULE_ID, 'enable-receiving-highlights', {
     name: `${MODULE_ID}.settings.enable-receiving-highlights.name`,
@@ -25,7 +25,7 @@ export const registerSettings = () => {
     scope: 'client',
     config: true,
     type: Boolean,
-    default: true
+    default: true,
   })
   game.settings.register(MODULE_ID, 'keybinding-modifiers', {
     name: `${MODULE_ID}.settings.keybinding-modifiers.name`,
@@ -60,8 +60,8 @@ export const registerSettings = () => {
       trusted: `${MODULE_ID}.settings.permission-level.choices.trusted`,
       player: `${MODULE_ID}.settings.permission-level.choices.player`,
     },
-    requiresReload: true
-  });  
+    requiresReload: true,
+  })
 
   game.keybindings.register(MODULE_ID, 'activate-highlighter-tool', {
     name: `${MODULE_ID}.settings.activate-highlighter-tool.name`,
