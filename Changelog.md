@@ -1,3 +1,7 @@
+## 2.3.2 - 2025-10-12
+- Added a nice toolclip
+- Moved some strings to be translatable
+
 ## 2.3.1 - 2025-10-02
 - Added a setting to control which user types can highlight for others (default:  trusted players and GM) (#11)
 - Added French localization 
