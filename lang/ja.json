@@ -1,6 +1,9 @@
 {
   "remote-highlight-ui": {
-    "tokenToolbar.title": "リモートハイライト",
+    "tool": {
+      "heading": "リモートハイライト",
+      "paragraph": "UI要素をクリックすると、全員にハイライト表示します。組み込みのショートカット (例：Ctrl+中クリック) でも行えます。ユーザーリストから特定のユーザーをハイライト対象に設定することもできます。"
+    },
     "settings": {
       "enable-highlighting-for-others": {
         "name": "他プレイヤーへのハイライトを有効化",
@@ -12,7 +15,7 @@
       },
       "keybinding-modifiers": {
         "name": "修飾キー",
-        "hint": "中クリックでハイライトをトリガーさせるための修飾キーを選択してください（デフォルト：Control）。",
+        "hint": "中クリックでハイライトをトリガーさせるための修飾キーを選択してください。（デフォルト：Control）",
         "choices": {
           "control": "Control",
           "control+shift": "Control + Shift",
@@ -21,7 +24,7 @@
       },
       "allow-when-right-clicking": {
         "name": "右クリックも許可",
-        "hint": "修飾キー＋右クリックでもトリガーしますか？ (デフォルト：無効)"
+        "hint": "修飾キー＋右クリックでもトリガーしますか？（デフォルト：無効）"
       },
       "activate-highlighter-tool": {
         "name": "ハイライトツール起動",
@@ -30,7 +33,20 @@
       "instant-highlight-keybind": {
         "name": "即時ハイライト",
         "hint": "このキーを入力すると、カーソル下のUI要素が全員に対してハイライト表示されます。「他プレイヤーへのハイライトを有効化」設定を有効にする必要があります。"
-      }
+      },
+	  "permission-level": {
+	    "name": "ツールを利用できる最低レベル",
+	    "hint": "どのレベル（役割）のユーザーにツールバーボタンを表示するかを選択してください。",
+	    "choices": {
+	  	  "gm": "GMのみ",
+	  	  "trusted": "GM + 優良プレイヤー",
+	  	  "player": "全プレイヤー"
+	    }
+	  }
+    },
+    "playerList": {
+      "highlightOnlyForThisUser": "このユーザーにだけUIをハイライト",
+      "stopOnlyHighlightingForThisUser": "このユーザーにだけのハイライトをやめる"
     }
   }
 }
