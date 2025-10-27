@@ -1,3 +1,6 @@
+## 2.3.3 - 2025-10-27
+- Updated Japanese localization
+
 ## 2.3.2 - 2025-10-12
 - Added a nice toolclip
 - Moved some strings to be translatable
