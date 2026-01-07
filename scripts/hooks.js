@@ -8,7 +8,7 @@ import {
 } from './remote-highlight-ui.js'
 import { MODULE_ID, registerSettings } from './settings.js'
 
-const canSeeButton = () => {
+export const hasPermissionToHighlight = () => {
   const user = game.user
   const permissionLevel = game.settings.get(MODULE_ID, 'permission-level')
 
@@ -46,7 +46,7 @@ Hooks.on('getSceneControlButtons', controls => {
     return
   }
   const enableHighlighting = game.settings.get(MODULE_ID, 'enable-highlighting-for-others')
-  const visible = enableHighlighting && canSeeButton()
+  const visible = enableHighlighting && hasPermissionToHighlight()
   const activateKeybind = game.keybindings.bindings.get(`${MODULE_ID}.activate-highlighter-tool`)?.[0]?.key?.replace('Key', '') ?? null
   const instantKeybind = game.keybindings.bindings.get(`${MODULE_ID}.instant-highlight-keybind`)?.[0]?.key?.replace('Key', '') ?? null
 
@@ -101,7 +101,7 @@ export const enableHighlighting = (enabled) => {
 
   const highlightTool = ui.controls?.controls?.tokens?.tools.remoteHighlight
   if (highlightTool) {
-    highlightTool.visible = enabled && canSeeButton()
+    highlightTool.visible = enabled && hasPermissionToHighlight()
     ui.controls.render()
   }
 }
