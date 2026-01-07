@@ -1,3 +1,6 @@
+## 2.3.3 - 2026-01-07
+- Added permission checks to all highlighter tool calls (#20)
+
 ## 2.3.2 - 2025-10-12
 - Added a nice toolclip
 - Moved some strings to be translatable
