@@ -1,3 +1,6 @@
+## 2.3.4 - 2026-01-07
+- Added permission checks to all highlighter tool calls (#20)
+
 ## 2.3.3 - 2025-10-27
 - Updated Japanese localization
 
