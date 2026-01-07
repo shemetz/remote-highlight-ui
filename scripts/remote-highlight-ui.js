@@ -7,6 +7,7 @@ import {
   HIGHLIGHT_PADDING,
   MODULE_ID,
 } from './settings.js'
+import { hasPermissionToHighlight } from './hooks'
 
 let redBoxHighlightOverlayElement // after init, will always be defined
 let userIdToOnlyHighlightFor = null
@@ -30,6 +31,7 @@ export const initOverlay = () => {
 }
 
 export const toggleHighlightTool = () => {
+  if (!hasPermissionToHighlight()) return
   isHighlightToolActive = !isHighlightToolActive
   if (isHighlightToolActive) {
     orangeBoxPreviewOverlayElement.classList.add('rhui-preview')
@@ -305,6 +307,7 @@ const onSuccessfulHighlightClick = (event) => {
 
 const onAuxClick = (event) => {
   if (event.button === 2 && !game.settings.get(MODULE_ID, 'allow-when-right-clicking')) return
+  if (!hasPermissionToHighlight()) return
   const heldModifiers = foundry.helpers.interaction.KeyboardManager.getKeyboardEventContext(event).modifiers
   if (!areKeybindingModifierKeysFitting(heldModifiers)) return
 
@@ -314,6 +317,7 @@ const onAuxClick = (event) => {
 const onClick = (event) => {
   // 0 = left click
   if (event.button !== 0) return
+  // respond to a normal click only after activating via toolbar button press
   if (!isHighlightToolActive) return
 
   toggleHighlightTool()
@@ -333,6 +337,7 @@ const onMouseMove = (event) => {
 }
 
 export const instantHighlight = (keybindEvent) => {
+  if (!hasPermissionToHighlight()) return
   // event doesn't have coords, we'll get them with a workaround
   const { x, y } = canvas.app.stage.toGlobal(canvas.mousePosition)
   const event = keybindEvent.event
