@@ -7,7 +7,7 @@ import {
   HIGHLIGHT_PADDING,
   MODULE_ID,
 } from './settings.js'
-import { hasPermissionToHighlight } from './hooks'
+import { hasPermissionToHighlight } from './hooks.js'
 
 let redBoxHighlightOverlayElement // after init, will always be defined
 let userIdToOnlyHighlightFor = null
