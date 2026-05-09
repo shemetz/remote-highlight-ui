@@ -61,7 +61,7 @@ Hooks.on('getSceneControlButtons', controls => {
     toolclip: {
       src: `modules/${MODULE_ID}/assets/rh-toolclip.webm`,
       heading: `${MODULE_ID}.tool.heading`,
-      items: SceneControls.buildToolclipItems([
+      items: foundry.applications.ui.SceneControls.buildToolclipItems([
         { paragraph: `${MODULE_ID}.tool.paragraph` },
         activateKeybind ? {
           heading: `${MODULE_ID}.settings.activate-highlighter-tool.name`,
