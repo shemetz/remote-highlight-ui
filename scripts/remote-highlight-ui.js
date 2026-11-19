@@ -180,7 +180,14 @@ export const onSocketMessageHighlightSomething = (message) => {
   }
   clearTimeout(stopHighlightTimeout)
   clearTimeout(resetOverlayTimeout)
-  const $element = $(`${message.selector}`)
+  // for security, let's verify that it's a normal selector and not an XSS attempt
+  let element = null
+  try {
+    element = typeof message.selector === 'string' ? document.querySelector(message.selector) : null
+  } catch {
+    console.error(`${MODULE_ID} - error parsing socket message selector: ${message.selector}`)
+  }
+  const $element = $(element ? [element] : [])
   const boundingRect = $element[0]?.getBoundingClientRect()
   const foundryTab = getFoundryTabOf($element)
   const pf2eSheetTab = getPf2eSheetTabOf($element)
